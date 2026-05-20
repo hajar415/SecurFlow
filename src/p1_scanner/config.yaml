@@ -1,0 +1,23 @@
+# P1 Scanner Configuration
+target_path: "../../target_app"
+output_file: "../../shared/1_raw_results.json"
+severity_filter:
+  - "CRITICAL"
+  - "HIGH"
+  - "MEDIUM"
+
+# Scanner settings
+trivy:
+  timeout: 300
+  scanners:
+    - "vuln"
+  
+grype:
+  timeout: 300
+  enable_epss: true
+
+# Ignore patterns
+ignore_patterns:
+  - "*.log"
+  - "*.tmp"
+  - "node_modules/*"

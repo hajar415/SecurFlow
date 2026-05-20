@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SecurFlow — CTI Security Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg:      #FFFFFF;
+      --panel:   #FFFFFF;
+      --border:  #E2E8F0;
+      --border2: #CBD5E1;
+      --accent:  #2563EB;
+      --blue:    #2563EB;
+      --indigo:  #6366F1;
+      --red:     #EF4444;
+      --orange:  #F97316;
+      --green:   #10B981;
+      --text:    #1E293B;
+      --text2:   #475569;
+      --text3:   #94A3B8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    
+    /* ── HEADER ── */
+    header {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 48px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .logo { display: flex; align-items: center; gap: 16px; }
+    .logo-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+    .logo-name span { color: var(--accent); }
+    .logo-sub  { font-family: 'Space Mono', monospace; font-size: 0.58rem; color: var(--text2); letter-spacing: 3px; margin-top: 1px; }
+    .header-right { display: flex; align-items: center; gap: 20px; }
+    .live {
+      font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--green);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .live::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    .header-ts { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--text2); }
+
+    /* ── MAIN ── */
+    main { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 28px 28px; }
+
+    /* ── BANNER ── */
+    .banner {
+      position: relative; overflow: hidden;
+      border-radius: 12px; padding: 22px 28px;
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 18px;
+      border: 1px solid; animation: slideIn .45s ease-out;
+    }
+    @keyframes slideIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+    .banner::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; }
+    .banner.bloquer { background:#FEF2F2; border-color:#FECACA; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .banner.bloquer::before { background: var(--red); }
+    .banner.ok     { background:#F0FDF4; border-color:#BBF7D0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .banner.ok::before { background: var(--green); }
+    .banner-icon { width:50px;height:50px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0; }
+    .banner.bloquer .banner-icon { background:rgba(239,68,68,.1); }
+    .banner.ok      .banner-icon { background:rgba(16,185,129,.1); }
+    .banner-title { font-size:1.05rem;font-weight:800;text-transform:uppercase; }
+    .banner.bloquer .banner-title { color:var(--red); }
+    .banner.ok      .banner-title { color:var(--green); }
+    .banner-sub { font-family:'Space Mono',monospace; font-size:.72rem; color:var(--text2); margin-top:4px; }
+    .banner-link {
+      margin-left: auto; flex-shrink: 0;
+      font-family:'Space Mono',monospace; font-size:.68rem;
+      color:#FFFFFF; text-decoration:none;
+      border:none; border-radius:8px; padding:6px 14px;
+      background:var(--accent); transition: all .15s;
+      white-space: nowrap;
+    }
+    .banner-link:hover { background:#1D4ED8; }
+
+    /* ── KPI CARDS ── */
+    .kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:24px; }
+    .kpi {
+      position:relative; overflow:hidden;
+      background:var(--panel); border:1px solid var(--border); border-radius:10px;
+      padding:18px 16px; animation:fadeUp .5s ease-out both;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .kpi::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; }
+    .kpi.total::before   { background:var(--blue); }
+    .kpi.bloquer::before { background:var(--red); }
+    .kpi.alerter::before { background:var(--orange); }
+    .kpi.passer::before  { background:var(--green); }
+    .kpi.srp::before     { background:var(--yellow); }
+    .kpi-num { font-family:'Space Mono',monospace; font-size:2.4rem; font-weight:700; line-height:1; margin-bottom:5px; }
+    .kpi.total.kpi   .kpi-num { color:var(--blue); }
+    .kpi.bloquer .kpi-num { color:var(--red); }
+    .kpi.alerter .kpi-num { color:var(--orange); }
+    .kpi.passer  .kpi-num { color:var(--green); }
+    .kpi.srp     .kpi-num { color:var(--yellow); }
+    .kpi-label { font-size:.62rem; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--text2); }
+    .kpi-bar { position:absolute; bottom:0;left:0; height:2px; transition:width 1.2s ease; border-radius:0 2px 0 0; }
+    .kpi.total.kpi   .kpi-bar { background:var(--blue); }
+    .kpi.bloquer .kpi-bar { background:var(--red); }
+    .kpi.alerter .kpi-bar { background:var(--orange); }
+    .kpi.passer  .kpi-bar { background:var(--green); }
+    .kpi.srp     .kpi-bar { background:var(--yellow); }
+
+    /* ── LAYOUT ── */
+    .layout { display:grid; grid-template-columns:1fr 300px; gap:18px; margin-bottom:18px; }
+
+    /* ── PANEL ── */
+    .panel { background:var(--panel); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    .panel-head {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 20px; border-bottom:1px solid var(--border);
+      background:var(--bg);
+    }
+    .panel-title { font-family:'Space Mono',monospace; font-size:.65rem; letter-spacing:3px; text-transform:uppercase; color:var(--accent); }
+    .panel-badge {
+      font-family:'Space Mono',monospace; font-size:.62rem; color:var(--text2);
+      background:rgba(37,99,235,.06); border:1px solid rgba(37,99,235,.12);
+      padding:2px 10px; border-radius:20px;
+    }
+
+    /* ── FILTERS ── */
+    .filters { display:flex; gap:6px; padding:12px 20px; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+    .fbtn {
+      font-family:'Space Mono',monospace; font-size:.62rem; letter-spacing:1px; text-transform:uppercase;
+      padding:3px 12px; border-radius:20px; border:1px solid var(--border);
+      background:var(--bg); color:var(--text2); cursor:pointer; transition:all .15s;
+    }
+    .fbtn:hover, .fbtn.active { border-color:var(--accent); color:var(--accent); background:var(--bg); }
+    .fbtn.fb::after  { content:' ■'; color:var(--red); }
+    .fbtn.fa::after  { content:' ■'; color:var(--orange); }
+    .fbtn.fp::after  { content:' ■'; color:var(--green); }
+
+    /* ── TABLE ── */
+    .tbl-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:.8rem; min-width:600px; }
+    th { padding:9px 16px; font-family:'Space Mono',monospace; font-size:.6rem; letter-spacing:2px; text-transform:uppercase; color:var(--text3); text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; }
+    td { padding:0; border-bottom:1px solid var(--border2); }
+    tr.cve-row { cursor:pointer; transition:background .12s; }
+    tr.cve-row:hover td { background:var(--bg); }
+    tr.cve-row td { padding:12px 16px; vertical-align:middle; }
+    tr.detail-row td { padding:0; }
+    tr.detail-row { display:none; }
+    tr.detail-row.open { display:table-row; }
+
+    .cve-id { font-family:'Space Mono',monospace; font-size:.75rem; font-weight:700; color:var(--text); }
+    .pkg-name { font-weight:600; color:var(--text); }
+
+    /* SRP GAUGE */
+    .srp-wrap { display:flex; align-items:center; gap:7px; }
+    .srp-track { width:44px; height:4px; background:rgba(255,255,255,.07); border-radius:2px; overflow:hidden; }
+    .srp-fill  { height:4px; border-radius:2px; }
+    .srp-val   { font-family:'Space Mono',monospace; font-size:.75rem; font-weight:700; }
+
+    /* DECISION BADGE */
+    .dec {
+      display:inline-flex; align-items:center; gap:5px;
+      font-family:'Space Mono',monospace; font-size:.62rem; font-weight:700; letter-spacing:1px;
+      padding:3px 10px; border-radius:6px; white-space:nowrap;
+    }
+    .dec::before { content:''; width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+    .dec.BLOQUER { background:#FEF2F2; color:var(--red);    border:1px solid #FECACA; }
+    .dec.BLOQUER::before { background:var(--red); }
+    .dec.ALERTER { background:#FFF7ED; color:var(--orange); border:1px solid #FED7AA; }
+    .dec.ALERTER::before { background:var(--orange); }
+    .dec.PASSER  { background:#F0FDF4; color:var(--green);  border:1px solid #BBF7D0; }
+    .dec.PASSER::before  { background:var(--green); }
+
+    /* CHEVRON */
+    .chev { font-size:.65rem; color:var(--text3); transition:transform .2s; margin-left:auto; }
+    .cve-row.open .chev { transform:rotate(90deg); color:var(--accent); }
+
+    /* DETAIL ACCORDEON */
+    .detail-box {
+      background:var(--bg); border-top:1px solid var(--border);
+      padding:16px 20px; display:grid; grid-template-columns:1fr 1fr; gap:14px;
+    }
+    .detail-section { padding:12px; }
+    .detail-label { font-family:'Space Mono',monospace; font-size:.58rem; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:7px; }
+    .ai-box { background:#EEF2FF; border-left:3px solid var(--indigo); border-radius:0 8px 8px 0; padding:9px 12px; font-size:.78rem; color:#3730A3; line-height:1.55; }
+    .fix-box { background:#F0FDF4; border-left:3px solid var(--green); border-radius:0 8px 8px 0; padding:9px 12px; font-family:'Space Mono',monospace; font-size:.73rem; color:#065F46; line-height:1.55; }
+
+    /* ── CHART PANEL ── */
+    .chart-body { padding:18px; }
+    .chart-wrap { height:170px; }
+
+    /* ── META PANEL ── */
+    .meta-panel { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:20px 24px; }
+    .meta-row { display:flex; flex-direction:column; gap:10px; }
+    .meta-item .mk { font-family:'Space Mono',monospace; font-size:.58rem; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:3px; }
+    .meta-item .mv { font-size:.85rem; font-weight:600; color:var(--text); }
+
+    @media(max-width:900px) { .layout{grid-template-columns:1fr;} .kpi-grid{grid-template-columns:repeat(3,1fr);} }
+    @media(max-width:500px) { .kpi-grid{grid-template-columns:repeat(2,1fr);} main{padding:16px 12px;} }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="./logo.png" alt="SentinelFlow" style="height:120px !important; width:auto !important; object-fit:contain; display:block;">
+    <div>
+      <div class="logo-sub">CTI Security Dashboard</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="live">PIPELINE ACTIF</div>
+    <div class="header-ts" id="header-ts">—</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- BANNER -->
+  <div id="banner" class="banner bloquer">
+    <div class="banner-icon" id="b-icon">⛔</div>
+    <div>
+      <div class="banner-title" id="b-title">Chargement...</div>
+      <div class="banner-sub"  id="b-sub">Initialisation</div>
+    </div>
+    <a href="#vuln-table" class="banner-link" id="b-link" style="display:none">▼ Voir les failles</a>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" id="kpi-grid"></div>
+
+  <!-- LAYOUT TABLE + CHART -->
+  <div class="layout">
+
+    <!-- TABLE -->
+    <div class="panel" id="vuln-table">
+      <div class="panel-head">
+        <span class="panel-title">Vulnerability Decisions</span>
+        <span class="panel-badge" id="total-badge">— CVE</span>
+      </div>
+      <div class="filters">
+        <button class="fbtn active" onclick="doFilter('ALL',this)">Toutes</button>
+        <button class="fbtn fb"     onclick="doFilter('BLOQUER',this)">Bloquer</button>
+        <button class="fbtn fa"     onclick="doFilter('ALERTER',this)">Alerter</button>
+        <button class="fbtn fp"     onclick="doFilter('PASSER',this)">Passer</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>CVE ID</th>
+              <th>Package</th>
+              <th>SRP Score</th>
+              <th>Décision</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title">Répartition</span></div>
+      <div class="chart-body"><div class="chart-wrap"><canvas id="decChart"></canvas></div></div>
+      <div class="panel-head" style="margin-top:4px"><span class="panel-title">SRP Distribution</span></div>
+      <div class="chart-body"><div class="chart-wrap"><canvas id="srpChart"></canvas></div></div>
+    </div>
+
+  </div>
+
+  <!-- META -->
+  <div class="meta-panel">
+    <div class="panel-title" style="margin-bottom:14px">Pipeline Metadata</div>
+    <div class="meta-row" id="meta-row"></div>
+  </div>
+
+</main>
+
+<script>
+// ── CHARGEMENT ────────────────────────────────────────────────────
+async function load() {
+  const paths = [
+    './shared/3_final_report.json',
+    './3_final_report.json',
+    '../shared/3_final_report.json'
+  ];
+  
+  for (const p of paths) {
+    try {
+      const res = await fetch(p);
+      if (res.ok) {
+        console.log('[SecurFlow] Chargé depuis:', p);
+        return await res.json();
+      }
+    } catch(e) {}
+  }
+  
+  // Plus de FALLBACK : on affiche une erreur
+  console.error('[SecurFlow] Aucun fichier JSON trouvé');
+  return null;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────
+function render(data) {
+  if (!data) {
+    document.getElementById('vulnTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">❌ Erreur : Aucun rapport trouvé. Vérifiez que le pipeline a bien été exécuté.</td></tr>';
+    return;
+  }
+  const meta  = data.decision_metadata;
+  const vulns = data.vulnerability_decisions;
+
+  // Trier par SRP décroissant (le plus dangereux en premier)
+  vulns.sort((a, b) => b.srp_score - a.srp_score);
+
+  const dec   = meta.decisions;
+  const total = meta.total_processed;
+  const isBlocked = (dec.BLOQUER || 0) > 0;
+
+  // Header timestamp
+  const ts = meta.timestamp ? new Date(meta.timestamp).toLocaleString('fr-FR') : '—';
+  document.getElementById('header-ts').textContent = ts;
+
+  // Banner
+  const banner = document.getElementById('banner');
+  if (isBlocked) {
+    banner.className = 'banner bloquer';
+    document.getElementById('b-icon').textContent  = '⛔';
+    document.getElementById('b-title').textContent = 'DÉPLOIEMENT BLOQUÉ';
+    document.getElementById('b-sub').textContent   = `${dec.BLOQUER} faille(s) critique(s) — correction obligatoire avant de continuer`;
+  } else {
+    banner.className = 'banner ok';
+    document.getElementById('b-icon').textContent  = '✅';
+    document.getElementById('b-title').textContent = 'PIPELINE OK — DÉPLOIEMENT AUTORISÉ';
+    document.getElementById('b-sub').textContent   = 'Aucune faille nécessitant un blocage immédiat';
+  }
+  document.getElementById('b-link').style.display = 'flex';
+
+  // KPIs
+  const avgSrp = (meta.average_srp || 0).toFixed(1);
+  const kpis = [
+    { cls:'total',   label:'Total CVE',  val: total,              pct: 100 },
+    { cls:'bloquer', label:'Bloquées',   val: dec.BLOQUER || 0,   pct: Math.round((dec.BLOQUER||0)/total*100) },
+    { cls:'alerter', label:'Alertes',    val: dec.ALERTER || 0,   pct: Math.round((dec.ALERTER||0)/total*100) },
+    { cls:'passer',  label:'Passées',    val: dec.PASSER  || 0,   pct: Math.round((dec.PASSER||0)/total*100) },
+    { cls:'srp',     label:'SRP Moyen',  val: avgSrp,             pct: Math.round(avgSrp/10*100) },
+  ];
+  document.getElementById('kpi-grid').innerHTML = kpis.map((k,i) => `
+    <div class="kpi ${k.cls}" style="animation-delay:${i*.07}s">
+      <div class="kpi-num">${k.val}</div>
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-bar" style="width:${k.pct}%"></div>
+    </div>`).join('');
+
+  // Badge total
+  document.getElementById('total-badge').textContent = `${total} CVE`;
+
+  // Table
+  document.getElementById('tbody').innerHTML = vulns.map((v, i) => {
+    const srpColor = v.srp_score >= 8 ? 'var(--red)' : v.srp_score >= 5 ? 'var(--orange)' : 'var(--green)';
+    const pct = Math.min(Math.round(v.srp_score / 10 * 100), 100);
+    return `
+    <tr class="cve-row" data-dec="${v.decision}" onclick="toggleRow(${i})">
+      <td><span class="cve-id">${v.cve_id}</span></td>
+      <td><span class="pkg-name">${v.package}</span></td>
+      <td>
+        <div class="srp-wrap">
+          <div class="srp-track"><div class="srp-fill" style="width:${pct}%;background:${srpColor}"></div></div>
+          <span class="srp-val" style="color:${srpColor}">${v.srp_score}</span>
+        </div>
+      </td>
+      <td><span class="dec ${v.decision}">${v.decision}</span></td>
+      <td><span class="chev">▶</span></td>
+    </tr>
+    <tr class="detail-row" id="detail-${i}">
+      <td colspan="5">
+        <div class="detail-box">
+          <div class="detail-section">
+            <div class="detail-label">🤖 Explication IA</div>
+            <div class="ai-box">${v.ai_explanation && v.ai_explanation.trim() ? v.ai_explanation : '<span style="color:var(--text3);font-style:italic">IA non disponible pour cette CVE</span>'}</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">🔧 Commande de correction</div>
+            <div class="fix-box">${v.ai_fix && v.ai_fix.trim() ? v.ai_fix : '<span style="color:var(--text3);font-style:italic">IA non disponible pour cette CVE</span>'}</div>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Charts
+  Chart.defaults.color = '#94A3B8';
+  Chart.defaults.borderColor = '#E2E8F0';
+
+  // Destroy existing charts before recreating
+  const existingDec = Chart.getChart('decChart');
+  if (existingDec) existingDec.destroy();
+  const existingSrp = Chart.getChart('srpChart');
+  if (existingSrp) existingSrp.destroy();
+
+  new Chart(document.getElementById('decChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['BLOQUER', 'ALERTER', 'PASSER'],
+      datasets: [{
+        data: [dec.BLOQUER||0, dec.ALERTER||0, dec.PASSER||0],
+        backgroundColor: ['#EF4444','#F97316','#10B981'],
+        borderColor: ['#EF4444','#F97316','#10B981'], borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '62%',
+      plugins: { legend: { position:'bottom', labels:{ color: '#475569', font:{ family:'Space Mono', size:9 }, padding:8 } } }
+    }
+  });
+
+  const srpVals = vulns.map(v => v.srp_score);
+  new Chart(document.getElementById('srpChart'), {
+    type: 'bar',
+    data: {
+      labels: vulns.map(v => v.cve_id.replace('CVE-','')),
+      datasets: [{
+        label: 'SRP', data: srpVals,
+        backgroundColor: srpVals.map(s => s>=8?'#EF4444':s>=5?'#F97316':'#10B981'),
+        borderColor:     srpVals.map(s => s>=8?'#EF4444':s>=5?'#F97316':'#10B981'),
+        borderWidth: 1, borderRadius: 4, borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, max: 10, ticks: { font:{ family:'Space Mono', size:9 } }, grid:{ color:'rgba(226,232,240,.8)' } },
+        x: { ticks: { font:{ family:'Space Mono', size:8 }, maxRotation: 30 }, grid:{ display:false } }
+      }
+    }
+  });
+
+  // Meta
+  document.getElementById('meta-row').innerHTML = [
+    { k:'Timestamp',        v: ts },
+    { k:'Engine Version',   v: meta.engine_version || '—' },
+    { k:'Total traités',    v: total },
+    { k:'Score SRP moyen',  v: avgSrp + ' / 10' },
+  ].map(m => `<div class="meta-item"><div class="mk">${m.k}</div><div class="mv">${m.v}</div></div>`).join('');
+}
+
+// ── ACCORDÉON ─────────────────────────────────────────────────────
+function toggleRow(i) {
+  const row    = document.getElementById(`detail-${i}`);
+  const cvRow  = document.querySelectorAll('.cve-row')[i];
+  const isOpen = row.classList.contains('open');
+  // Fermer tous les autres
+  document.querySelectorAll('.detail-row').forEach(r => r.classList.remove('open'));
+  document.querySelectorAll('.cve-row').forEach(r => r.classList.remove('open'));
+  if (!isOpen) { row.classList.add('open'); cvRow.classList.add('open'); }
+}
+
+// ── FILTRE ────────────────────────────────────────────────────────
+function doFilter(dec, btn) {
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Close ALL open detail rows and remove open class from all rows
+  document.querySelectorAll('.detail-row').forEach(r => r.classList.remove('open'));
+  document.querySelectorAll('.cve-row').forEach(r => r.classList.remove('open'));
+  document.querySelectorAll('.cve-row').forEach((row, i) => {
+    const show = dec === 'ALL' || row.dataset.dec === dec;
+    row.style.display = show ? '' : 'none';
+    document.getElementById(`detail-${i}`).style.display = 'none';
+  });
+}
+
+
+load().then(render);
+</script>
+</body>
+</html>

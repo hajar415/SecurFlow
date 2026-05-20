@@ -1,0 +1,297 @@
+{
+  "decision_metadata": {
+    "timestamp": "2026-05-20T19:59:37.671632Z",
+    "engine_version": "1.0.0",
+    "config_used": {
+      "high_context_components": [
+        "sequelize",
+        "typeorm",
+        "psycopg2",
+        "sqlalchemy",
+        "mongoose"
+      ],
+      "block_threshold": 7.0,
+      "alert_threshold": 4.0,
+      "model": "deepseek-ai/DeepSeek-V3-0324"
+    },
+    "total_processed": 27,
+    "decisions": {
+      "BLOQUER": 0,
+      "ALERTER": 1,
+      "PASSER": 26
+    },
+    "average_srp": 2.8
+  },
+  "vulnerability_decisions": [
+    {
+      "cve_id": "CVE-2023-0286",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 5.6,
+      "decision": "ALERTER",
+      "ai_explanation": "Cette vulnérabilité de type confusion dans le traitement des adresses X.400 permet à un attaquant de manipuler des certificats X.509 pour provoquer des crashes ou exécution de code arbitraire. Bien que non listée dans le KEV, son score EPSS élevé indique une exploitation probable.",
+      "ai_fix": "Mettre à jour la bibliothèque cryptography vers une version corrigée (>=39.0.0). Vérifier que les dépendances transitives utilisent également la version patched.",
+      "timestamp": "2026-05-20T19:57:29.391153Z"
+    },
+    {
+      "cve_id": "CVE-2024-6345",
+      "package": "setuptools",
+      "version": "inconnue",
+      "srp_score": 3.7,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans setuptools permet l'exécution de code à distance via des URLs malveillantes lors du téléchargement de paquets. Bien que le score EPSS soit modéré, le CVSS élevé indique un impact potentiellement sévère.",
+      "ai_fix": "Mettre à jour setuptools vers la version 69.1.1 ou supérieure immédiatement pour corriger la faille d'injection de code.",
+      "timestamp": "2026-05-20T19:58:27.848729Z"
+    },
+    {
+      "cve_id": "CVE-2025-47273",
+      "package": "setuptools",
+      "version": "inconnue",
+      "srp_score": 3.5,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité de traversal dans setuptools permet à un attaquant d'écrire des fichiers n'importe où sur le système. Bien que le score CVSS soit élevé, la faible probabilité d'exploitation (EPSS) et l'absence d'acteurs connus réduisent le risque immédiat.",
+      "ai_fix": "Mettre à jour setuptools vers la version 78.1.1 ou ultérieure pour corriger la vulnérabilité de traversal de chemin.",
+      "timestamp": "2026-05-20T19:58:33.576314Z"
+    },
+    {
+      "cve_id": "CVE-2023-43804",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 3.3,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans urllib3 concerne une mauvaise gestion des cookies HTTP, pouvant entraîner une fuite involontaire d'informations sensibles. Bien que le risque soit modéré (SRP 3.3), un attaquant pourrait exploiter cette faille pour voler des sessions ou des données d'authentification.",
+      "ai_fix": "Mettre à jour urllib3 vers une version corrigée et implémenter une gestion manuelle sécurisée des cookies. Utiliser des helpers dédiés comme http.cookiejar plutôt que de passer directement les en-têtes Cookie.",
+      "timestamp": "2026-05-20T19:58:45.020335Z"
+    },
+    {
+      "cve_id": "CVE-2018-10903",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet à un attaquant de forger des tags d'authentification trop courts (1 octet) dans python-cryptography, compromettant l'intégrité des données. Bien que le risque soit modéré (SRP 3.0), l'absence de validation de longueur peut conduire à des falsifications cryptographiques.",
+      "ai_fix": "Mettre à jour python-cryptography vers la version 2.3 ou supérieure qui impose une longueur minimale de tag. Valider toujours la longueur des tags en entrée avant traitement.",
+      "timestamp": "2026-05-20T19:57:16.833726Z"
+    },
+    {
+      "cve_id": "CVE-2023-50782",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans python-cryptography permet à un attaquant d'intercepter et déchiffrer des communications TLS utilisant des échanges de clés RSA. Bien que le risque soit modéré (SRP 3.0), cela pourrait exposer des données sensibles dans certains cas d'usage spécifiques.",
+      "ai_fix": "Mettre à jour le package cryptography vers la dernière version et privilégier les échanges de clés ECDHE plutôt que RSA dans la configuration TLS.",
+      "timestamp": "2026-05-20T19:57:35.037064Z"
+    },
+    {
+      "cve_id": "CVE-2018-18074",
+      "package": "requests",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité expose les credentials lors d'une redirection HTTPS vers HTTP sur le même hostname, permettant leur interception via sniffing réseau. Le risque est modéré (SRP 3.0) car nécessite des conditions réseau spécifiques.",
+      "ai_fix": "Mettre à jour la bibliothèque requests vers la version 2.20.0 ou supérieure pour corriger le comportement des en-têtes d'autorisation.",
+      "timestamp": "2026-05-20T19:57:56.081393Z"
+    },
+    {
+      "cve_id": "CVE-2019-11324",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans urllib3 peut permettre des connexions SSL/TLS non sécurisées en cas de mauvaise configuration des certificats CA. Bien que le risque soit modéré (SRP 3.0), elle pourrait être exploitée pour des attaques de type Man-in-the-middle.",
+      "ai_fix": "Mettre à jour urllib3 vers la version 1.24.2 ou ultérieure pour corriger la gestion des certificats CA.",
+      "timestamp": "2026-05-20T19:58:38.773368Z"
+    },
+    {
+      "cve_id": "CVE-2025-66418",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans urllib3 permet un déni de service via une attaque par décompression infinie. Un serveur malveillant peut forcer le client à consommer toutes ses ressources CPU/mémoire.",
+      "ai_fix": "Mettre à jour urllib3 vers la version 2.6.0 ou supérieure qui implémente une limite de décompression.",
+      "timestamp": "2026-05-20T19:58:49.522967Z"
+    },
+    {
+      "cve_id": "CVE-2025-66471",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "La vulnérabilité dans urllib3 permet un déni de service via une consommation excessive de ressources lors du traitement de données hautement compressées. Bien que le score SRP soit modéré (3.0/10), l'absence d'acteurs de menace connus réduit le risque immédiat.",
+      "ai_fix": "Mettre à jour urllib3 vers la version 2.6.0 ou ultérieure pour corriger la gestion des flux compressés.",
+      "timestamp": "2026-05-20T19:58:54.735401Z"
+    },
+    {
+      "cve_id": "CVE-2026-21441",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "La vulnérabilité dans urllib3 concerne une mauvaise gestion des flux de données HTTP, permettant potentiellement des attaques par déni de service ou des fuites de mémoire. Bien que le score SRP soit modéré (3.0/10), le CVSS élevé (7.5) indique un impact potentiellement important.",
+      "ai_fix": "Mettre à jour urllib3 vers la dernière version stable et implémenter des limites de taille pour les réponses HTTP streaming.",
+      "timestamp": "2026-05-20T19:59:00.036670Z"
+    },
+    {
+      "cve_id": "CVE-2026-26007",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 2.6,
+      "decision": "PASSER",
+      "ai_explanation": "La vulnérabilité dans les fonctions de gestion de clés publiques pourrait permettre à un attaquant de contourner des vérifications cryptographiques. Le faible score SRP et EPSS indique un risque limité en pratique.",
+      "ai_fix": "Mettre à jour le package cryptography vers la version 46.0.5 ou supérieure pour corriger les fonctions affectées.",
+      "timestamp": "2026-05-20T19:57:39.457220Z"
+    },
+    {
+      "cve_id": "CVE-2023-23931",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 2.6,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet à des objets immuables comme 'bytes' d'être utilisés dans des opérations de chiffrement censées modifier le buffer, créant un risque d'écrasement mémoire involontaire. Bien que le score SRP soit bas, cela pourrait être exploité pour corrompre des données sensibles.",
+      "ai_fix": "Mettre à jour le package cryptography vers une version corrigée qui valide correctement la mutabilité des buffers. Vérifier que les objets passés à `Cipher.update_into` implémentent bien le protocole buffer mutable.",
+      "timestamp": "2026-05-20T19:57:45.630637Z"
+    },
+    {
+      "cve_id": "CVE-2023-32681",
+      "package": "requests",
+      "version": "inconnue",
+      "srp_score": 2.6,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet la fuite des en-têtes Proxy-Authorization lors de redirections HTTPS, exposant potentiellement des identifiants sensibles. Bien que le score SRP soit modéré, le risque est réel pour les systèmes utilisant des proxies avec authentification.",
+      "ai_fix": "Mettre à jour la bibliothèque Requests vers la version 2.31.0 ou ultérieure qui corrige ce comportement en ne transmettant plus ces en-têtes lors des redirections.",
+      "timestamp": "2026-05-20T19:58:01.442781Z"
+    },
+    {
+      "cve_id": "CVE-2020-26137",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 2.6,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet l'injection CRLF dans urllib3, permettant à un attaquant d'insérer des en-têtes malveillants ou de manipuler les requêtes HTTP. Bien que le score SRP soit bas, cette faille pourrait être exploitée pour des attaques de type HTTP Request Smuggling ou cache poisoning.",
+      "ai_fix": "Mettre à jour urllib3 vers la version 1.25.9 ou ultérieure pour corriger cette vulnérabilité.",
+      "timestamp": "2026-05-20T19:59:21.935212Z"
+    },
+    {
+      "cve_id": "CVE-2024-37891",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 2.6,
+      "decision": "PASSER",
+      "ai_explanation": "La vulnérabilité dans urllib3 permet une fuite accidentelle des identifiants de proxy via l'en-tête Proxy-Authorization lors de requêtes HTTP normales. Bien que le risque soit faible (SRP 2.6), cela pourrait exposer des credentials sensibles si exploité.",
+      "ai_fix": "Mettre à jour urllib3 vers une version corrigée et éviter de stocker les credentials de proxy dans l'environnement lorsque non nécessaires.",
+      "timestamp": "2026-05-20T19:59:32.561537Z"
+    },
+    {
+      "cve_id": "CVE-2019-11236",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 2.5,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité de type CRLF injection dans urllib3 permet à un attaquant d'injecter des en-têtes HTTP malveillants ou de manipuler des requêtes s'il contrôle certains paramètres. Bien que le risque soit modéré (CVSS 6.1), l'absence d'acteurs connus exploitant cette faille et le faible score EPSS réduisent sa criticité.",
+      "ai_fix": "Mettre à jour urllib3 vers la version 1.24.2 ou ultérieure qui corrige cette vulnérabilité. Valider et assainir tous les paramètres utilisateur avant leur inclusion dans des requêtes HTTP.",
+      "timestamp": "2026-05-20T19:59:16.579290Z"
+    },
+    {
+      "cve_id": "CVE-2020-25659",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 2.4,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet des attaques par minutage (timing attacks) contre RSA, où un attaquant pourrait déduire des informations sur la clé privée en mesurant les temps de traitement. Bien que complexe à exploiter, ce type de faille est pertinent pour des systèmes sensibles traitant du chiffrement RSA.",
+      "ai_fix": "Mettre à jour python-cryptography vers la version 3.3 ou ultérieure qui inclut des protections contre les attaques par minutage. Vérifier que tous les usages de RSA PKCS#1 v1.5 utilisent désormais des contre-mesures temporelles constantes.",
+      "timestamp": "2026-05-20T19:57:23.724803Z"
+    },
+    {
+      "cve_id": "CVE-2022-40897",
+      "package": "setuptools",
+      "version": "inconnue",
+      "srp_score": 2.4,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité ReDoS dans setuptools permet à un attaquant de provoquer un déni de service via du HTML malveillant dans un package. Le risque est modéré car nécessite une interaction utilisateur spécifique.",
+      "ai_fix": "Mettre à jour setuptools vers la version 65.5.1 ou ultérieure pour corriger la vulnérabilité ReDoS dans package_index.py.",
+      "timestamp": "2026-05-20T19:58:22.811808Z"
+    },
+    {
+      "cve_id": "CVE-2018-25091",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 2.4,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans urllib3 peut exposer des credentials lors de redirections cross-origin, permettant potentiellement leur interception par un attaquant MITM ou leur fuite vers des domaines non autorisés.",
+      "ai_fix": "Mettre à jour urllib3 vers la version 1.24.2 ou ultérieure pour corriger le comportement des en-têtes d'autorisation lors des redirections.",
+      "timestamp": "2026-05-20T19:59:09.859277Z"
+    },
+    {
+      "cve_id": "CVE-2025-50181",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 2.4,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet de désactiver les redirections HTTP dans urllib3 via une mauvaise configuration de PoolManager. Le risque est limité car peu d'applications utilisent cette configuration spécifique et aucun exploit public n'est connu.",
+      "ai_fix": "Mettre à jour urllib3 vers la version 2.5.0 ou supérieure. Vérifier que les instances PoolManager utilisent des paramètres retries valides.",
+      "timestamp": "2026-05-20T19:59:37.671374Z"
+    },
+    {
+      "cve_id": "CVE-2024-0727",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 2.2,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet un DoS via un crash d'OpenSSL lors du traitement de fichiers PKCS12 malveillants. Le risque est limité car nécessite un chargement de fichiers non fiables. Score SRP bas (2.2/10) et EPSS très faible (0.0023%) indiquent une exploitation improbable.",
+      "ai_fix": "Mettre à jour la bibliothèque OpenSSL vers une version corrigée. Valider la provenance des fichiers PKCS12 avant traitement.",
+      "timestamp": "2026-05-20T19:57:51.257267Z"
+    },
+    {
+      "cve_id": "CVE-2024-35195",
+      "package": "requests",
+      "version": "inconnue",
+      "srp_score": 2.2,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet une attaque de type 'man-in-the-middle' persistante après une première requête non sécurisée. Le risque est modéré (SRP 2.2) car nécessite une configuration initiale dangereuse.",
+      "ai_fix": "Mettre à jour la bibliothèque requests vers la version 2.32.0 ou supérieure. Vérifier que tous les appels utilisent `verify=True` par défaut.",
+      "timestamp": "2026-05-20T19:58:06.485643Z"
+    },
+    {
+      "cve_id": "CVE-2026-25645",
+      "package": "requests",
+      "version": "inconnue",
+      "srp_score": 2.2,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet une attaque locale par usurpation de fichier via des noms prédictibles dans le répertoire temporaire. Le risque est limité car elle nécessite un accès local et des conditions spécifiques. Aucune exploitation active n'a été rapportée.",
+      "ai_fix": "Mettre à jour la bibliothèque requests vers la version 2.33.0 ou ultérieure. Éviter d'utiliser extract_zipped_paths() avec des sources non fiables.",
+      "timestamp": "2026-05-20T19:58:18.084582Z"
+    },
+    {
+      "cve_id": "CVE-2024-47081",
+      "package": "requests",
+      "version": "inconnue",
+      "srp_score": 2.1,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans la bibliothèque Requests permet une fuite des identifiants .netrc via des URLs malveillantes spécialement conçues. Bien que le risque soit modéré (CVSS 5.3), l'exploitation nécessite des conditions spécifiques. Aucun acteur de menace connu ne cible actuellement cette faille.",
+      "ai_fix": "Mettre à jour la bibliothèque Requests vers la version 2.32.4 ou supérieure. Pour les versions antérieures, désactiver l'utilisation du fichier .netrc.",
+      "timestamp": "2026-05-20T19:58:12.485803Z"
+    },
+    {
+      "cve_id": "CVE-2026-44431",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 2.1,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet des redirections cross-origin avec fuite potentielle de headers sensibles via ProxyManager. Le risque est limité car nécessite une configuration spécifique (assert_same_host=False) et aucun exploit actif n'est documenté.",
+      "ai_fix": "Mettre à jour urllib3 vers la version 2.7.0 ou supérieure pour corriger le comportement des redirections cross-origin.",
+      "timestamp": "2026-05-20T19:59:05.069083Z"
+    },
+    {
+      "cve_id": "CVE-2023-45803",
+      "package": "urllib3",
+      "version": "inconnue",
+      "srp_score": 1.7,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans urllib3 permet à des attaquants de potentiellement exfiltrer des données sensibles via des corps de requête non nettoyés lors de redirections HTTP, bien que le risque soit limité par la complexité d'exploitation.",
+      "ai_fix": "Mettre à jour urllib3 vers la version 2.0.0 ou supérieure qui corrige ce comportement en supprimant correctement le corps des requêtes lors des redirections.",
+      "timestamp": "2026-05-20T19:59:27.486636Z"
+    }
+  ]
+}

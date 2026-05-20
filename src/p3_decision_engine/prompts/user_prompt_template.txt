@@ -1,0 +1,7 @@
+Analyse cette vulnérabilité ({decision} - Score SRP: {srp_score:.1f}/10) :
+- CVE : {cve_id}
+- Package : {package} version {version}
+- CVSS : {cvss} | EPSS : {epss}
+- Description : {desc}
+- CISA KEV : {cisa_notes}
+- Threat Actors : {actors_str}
