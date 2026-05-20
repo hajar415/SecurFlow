@@ -1,77 +1,257 @@
 {
   "decision_metadata": {
-    "timestamp": "2026-05-20T20:27:50.700486Z",
+    "timestamp": "2026-05-20T22:23:41.834510Z",
     "engine_version": "1.0.0",
     "config_used": {
       "high_context_components": [
-        "psycopg2",
-        "typeorm",
         "sequelize",
         "sqlalchemy",
-        "mongoose"
+        "psycopg2",
+        "mongoose",
+        "typeorm"
       ],
       "block_threshold": 7.0,
       "alert_threshold": 4.0,
       "model": "deepseek-ai/DeepSeek-V3-0324"
     },
-    "total_processed": 27,
+    "total_processed": 53,
     "decisions": {
-      "BLOQUER": 0,
-      "ALERTER": 1,
-      "PASSER": 26
+      "BLOQUER": 1,
+      "ALERTER": 5,
+      "PASSER": 47
     },
-    "average_srp": 2.8
+    "average_srp": 3.1
   },
   "vulnerability_decisions": [
+    {
+      "cve_id": "CVE-2023-4863",
+      "package": "Pillow",
+      "version": "inconnue",
+      "srp_score": 8.3,
+      "decision": "BLOQUER",
+      "ai_explanation": "Alerte CTI de niveau BLOQUER pour CVE-2023-4863. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
+      "timestamp": "2026-05-20T22:18:33.931846Z"
+    },
+    {
+      "cve_id": "CVE-2022-34265",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 6.7,
+      "decision": "ALERTER",
+      "ai_explanation": "This SQL injection in Django's Trunc()/Extract() functions allows attackers to execute arbitrary SQL if they control the lookup_name parameter. The high CVSS/EPSS scores indicate widespread exploitability potential despite no known in-the-wild attacks.",
+      "ai_fix": "Immediately upgrade Django to version 3.2.14, 4.0.6 or later. Alternatively, validate all lookup_name inputs against a strict allowlist.",
+      "timestamp": "2026-05-20T22:19:57.617628Z"
+    },
+    {
+      "cve_id": "CVE-2021-35042",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 6.6,
+      "decision": "ALERTER",
+      "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2021-35042. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:19:38.717501Z"
+    },
     {
       "cve_id": "CVE-2023-0286",
       "package": "cryptography",
       "version": "inconnue",
       "srp_score": 5.6,
       "decision": "ALERTER",
-      "ai_explanation": "Cette vulnérabilité de type confusion dans le traitement des adresses X.400 permet à un attaquant de manipuler des certificats X.509 pour provoquer un crash ou une exécution de code arbitraire. Le score EPSS élevé (0.8845) indique une forte probabilité d'exploitation dans la nature.",
-      "ai_fix": "Mettre à jour la bibliothèque cryptography vers une version corrigée (>=39.0.0). Vérifier que les dépendances transitives utilisent également la version patchée.",
-      "timestamp": "2026-05-20T20:25:20.257989Z"
+      "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2023-0286. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
+      "timestamp": "2026-05-20T22:18:53.893023Z"
     },
     {
-      "cve_id": "CVE-2024-6345",
-      "package": "setuptools",
+      "cve_id": "CVE-2022-22817",
+      "package": "Pillow",
+      "version": "inconnue",
+      "srp_score": 4.0,
+      "decision": "ALERTER",
+      "ai_explanation": "Pillow avant 9.0.0 permet l'exécution de code arbitraire via ImageMath.eval, exposant les systèmes à des attaques RCE. Bien que peu exploitée actuellement (EPSS bas), la criticité CVSS 9.8 justifie une action immédiate.",
+      "ai_fix": "Mettre à jour Pillow vers la version 9.0.0 ou ultérieure pour corriger la vulnérabilité d'injection d'expressions Python.",
+      "timestamp": "2026-05-20T22:18:04.240893Z"
+    },
+    {
+      "cve_id": "CVE-2022-28346",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 4.0,
+      "decision": "ALERTER",
+      "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2022-28346. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:19:43.708734Z"
+    },
+    {
+      "cve_id": "CVE-2022-28347",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.9,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2022-28347. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:19:48.707882Z"
+    },
+    {
+      "cve_id": "CVE-2023-31047",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.9,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans Django permet de contourner la validation des fichiers lors d'uploads multiples via un seul champ de formulaire, exposant potentiellement à des attaques par injection de fichiers malveillants. Bien que le score EPSS soit faible, le CVSS critique indique un risque technique élevé si exploité.",
+      "ai_fix": "Mettre à jour Django vers les versions 3.2.19, 4.1.9 ou 4.2.1 qui corrigent ce comportement. Implémenter une validation côté serveur supplémentaire pour les uploads multiples si nécessaire.",
+      "timestamp": "2026-05-20T22:20:08.754797Z"
+    },
+    {
+      "cve_id": "CVE-2022-24303",
+      "package": "Pillow",
       "version": "inconnue",
       "srp_score": 3.7,
       "decision": "PASSER",
-      "ai_explanation": "La vulnérabilité dans setuptools permet une exécution de code à distance via des URLs malveillantes lors du téléchargement de paquets. Bien que le score EPSS soit modéré, le CVSS élevé indique un impact potentiellement sévère. Aucun acteur de menace spécifique n'est actuellement associé à cette faille.",
-      "ai_fix": "Mettez à jour setuptools vers la version 69.1.1 ou supérieure immédiatement. Évitez d'utiliser des URLs non fiables pour le téléchargement de paquets.",
-      "timestamp": "2026-05-20T20:26:35.580332Z"
+      "ai_explanation": "Cette vulnérabilité dans Pillow permet à des attaquants de supprimer des fichiers arbitraires via une mauvaise gestion des espaces dans les noms de chemins temporaires. Bien que le score CVSS soit élevé, le faible score SRP et EPSS suggère une exploitation peu probable en pratique.",
+      "ai_fix": "Mettre à jour Pillow vers la version 9.0.1 ou ultérieure pour corriger la gestion des chemins temporaires.",
+      "timestamp": "2026-05-20T22:18:19.079336Z"
     },
     {
-      "cve_id": "CVE-2025-47273",
-      "package": "setuptools",
+      "cve_id": "CVE-2023-24580",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.7,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-24580. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:21:25.181324Z"
+    },
+    {
+      "cve_id": "CVE-2022-36359",
+      "package": "django",
       "version": "inconnue",
       "srp_score": 3.5,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité de traversal dans setuptools permet à un attaquant d'écrire des fichiers dans des emplacements arbitraires du système. Bien que le score CVSS soit élevé, la faible probabilité d'exploitation (EPSS 0.49%) et l'absence d'acteurs connus la rendent peu critique en pratique.",
-      "ai_fix": "Mettre à jour setuptools vers la version 78.1.1 ou ultérieure pour corriger la vulnérabilité de traversal de chemin.",
-      "timestamp": "2026-05-20T20:26:41.879033Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet des attaques RFD où un attaquant peut forcer le téléchargement de fichiers malveillants en manipulant l'entête Content-Disposition. Bien que le score EPSS soit bas, le CVSS élevé indique un impact potentiellement sévère si exploité.",
+      "ai_fix": "Mettre à jour Django vers les versions 3.2.15+, 4.0.7+ ou supérieures pour corriger la vulnérabilité.",
+      "timestamp": "2026-05-20T22:21:10.284625Z"
     },
     {
-      "cve_id": "CVE-2023-43804",
-      "package": "urllib3",
+      "cve_id": "CVE-2023-50447",
+      "package": "Pillow",
       "version": "inconnue",
       "srp_score": 3.3,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans urllib3 concerne une mauvaise gestion des cookies HTTP qui pourrait entraîner une fuite d'informations sensibles. Bien que le score SRP soit modéré (3.3/10), le CVSS élevé (8.1) indique un impact potentiellement important si exploité.",
-      "ai_fix": "Mettre à jour urllib3 vers une version sécurisée et implémenter une gestion manuelle stricte des en-têtes Cookie pour éviter les fuites.",
-      "timestamp": "2026-05-20T20:26:53.040506Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-50447. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
+      "timestamp": "2026-05-20T22:18:09.173696Z"
     },
     {
-      "cve_id": "CVE-2018-10903",
-      "package": "cryptography",
+      "cve_id": "CVE-2025-64459",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.3,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans Django permet des injections SQL via des dictionnaires malveillants dans certaines méthodes QuerySet. Bien que le score SRP soit modéré (3.3/10), le CVSS élevé (8.3) indique un impact potentiellement sévère si exploité.",
+      "ai_fix": "Mettre à jour Django vers les versions 5.1.14, 4.2.26 ou 5.2.8 qui corrigent cette vulnérabilité. Valider strictement les entrées utilisateur passées aux méthodes QuerySet.",
+      "timestamp": "2026-05-20T22:20:18.714147Z"
+    },
+    {
+      "cve_id": "CVE-2022-41323",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.3,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2022-41323. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:21:15.238138Z"
+    },
+    {
+      "cve_id": "CVE-2023-36053",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.3,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-36053. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:21:30.215238Z"
+    },
+    {
+      "cve_id": "CVE-2021-31542",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.2,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans Django permet un directory traversal via des noms de fichiers malveillants, exposant potentiellement des fichiers sensibles du serveur. Bien que le score SRP soit modéré, l'absence d'acteurs connus réduit le risque immédiat.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.21, 3.1.9 ou 3.2.1 qui corrigent cette faille. Valider aussi les noms des fichiers uploadés côté serveur.",
+      "timestamp": "2026-05-20T22:20:35.888057Z"
+    },
+    {
+      "cve_id": "CVE-2023-23969",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.2,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-23969. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:21:20.408991Z"
+    },
+    {
+      "cve_id": "CVE-2025-57833",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.2,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2025-57833. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:21:51.263219Z"
+    },
+    {
+      "cve_id": "CVE-2023-43665",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.1,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-43665. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:21:35.072713Z"
+    },
+    {
+      "cve_id": "CVE-2023-46695",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.1,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans Django expose à des attaques DoS via des entrées malveillantes exploitant la lenteur de la normalisation NFKC sous Windows. Bien que le score SRP soit modéré (3.1/10), un attaquant pourrait ralentir ou bloquer l'authentification utilisateur.",
+      "ai_fix": "Mettre à jour Django vers les versions 3.2.23, 4.1.13 ou 4.2.7 qui corrigent cette vulnérabilité. Limiter la longueur des noms d'utilisateur peut aussi atténuer le risque.",
+      "timestamp": "2026-05-20T22:21:41.331502Z"
+    },
+    {
+      "cve_id": "CVE-2024-27351",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.1,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2024-27351. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:22:41.245649Z"
+    },
+    {
+      "cve_id": "CVE-2022-45198",
+      "package": "Pillow",
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans python-cryptography permet à un attaquant de forger des tags d'authentification trop courts (1 byte), compromettant l'intégrité des données. Le risque est modéré (SRP 3.0) car une exploitation nécessite que l'application ne valide pas déjà la longueur des tags.",
-      "ai_fix": "Mettre à jour python-cryptography vers la version 2.3 ou supérieure. Implémenter une validation de la longueur des tags côté application pour une défense en profondeur.",
-      "timestamp": "2026-05-20T20:25:05.847777Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2022-45198. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
+      "timestamp": "2026-05-20T22:18:24.137252Z"
+    },
+    {
+      "cve_id": "CVE-2023-44271",
+      "package": "Pillow",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-44271. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
+      "timestamp": "2026-05-20T22:18:28.951199Z"
     },
     {
       "cve_id": "CVE-2023-50782",
@@ -79,59 +259,119 @@
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans python-cryptography permet à un attaquant d'intercepter et déchiffrer des communications TLS utilisant des échanges de clés RSA. Bien que le risque soit modéré (SRP 3.0), cela pourrait exposer des données sensibles dans des scénarios d'attaque MITM.",
-      "ai_fix": "Mettre à jour le package cryptography vers la dernière version et privilégier les échanges de clés ECDHE plutôt que RSA dans la configuration TLS.",
-      "timestamp": "2026-05-20T20:25:26.811036Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-50782. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
+      "timestamp": "2026-05-20T22:18:58.986231Z"
     },
     {
-      "cve_id": "CVE-2018-18074",
-      "package": "requests",
+      "cve_id": "CVE-2024-26130",
+      "package": "cryptography",
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité expose les credentials lors d'une redirection HTTPS vers HTTP, permettant leur interception via sniffing réseau. Le risque est modéré (SRP 3.0) car nécessite des conditions réseau spécifiques.",
-      "ai_fix": "Mettre à jour le package requests vers la version 2.20.0 ou supérieure pour corriger le comportement des en-têtes d'autorisation.",
-      "timestamp": "2026-05-20T20:25:52.584983Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2024-26130. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
+      "timestamp": "2026-05-20T22:19:03.829283Z"
     },
     {
-      "cve_id": "CVE-2019-11324",
-      "package": "urllib3",
+      "cve_id": "CVE-2023-49083",
+      "package": "cryptography",
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans urllib3 peut permettre à des attaquants de bypasser la vérification SSL/TLS, exposant à des attaques MITM. Le risque est modéré (SRP 3.0) car nécessite des conditions réseau spécifiques.",
-      "ai_fix": "Mettre à jour urllib3 vers la version 1.24.2 ou supérieure pour corriger la gestion des certificats SSL.",
-      "timestamp": "2026-05-20T20:26:47.121621Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-49083. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
+      "timestamp": "2026-05-20T22:19:19.540113Z"
     },
     {
-      "cve_id": "CVE-2025-66418",
-      "package": "urllib3",
+      "cve_id": "CVE-2021-33571",
+      "package": "django",
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans urllib3 permet à un serveur malveillant de provoquer une attaque par déni de service via une chaîne de décompression infinie, exploitant l'absence de limite sur les étapes de compression. Bien que le score SRP soit modéré (3.0/10), le risque principal est une consommation excessive de ressources.",
-      "ai_fix": "Mettre à jour urllib3 vers la version 2.6.0 ou ultérieure qui implémente une limite sur les étapes de décompression.",
-      "timestamp": "2026-05-20T20:26:59.072575Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-33571. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:20:40.955113Z"
     },
     {
-      "cve_id": "CVE-2025-66471",
-      "package": "urllib3",
+      "cve_id": "CVE-2021-45115",
+      "package": "django",
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "La vulnérabilité dans urllib3 permet un déni de service via une exploitation de décompression abusive (Bomb Attack) lors du traitement de données hautement compressées. Bien que le score EPSS soit très bas, le risque existe pour les systèmes traitant des flux non fiables.",
-      "ai_fix": "Mettre à jour urllib3 vers la version 2.6.0 ou supérieure pour corriger la gestion des flux compressés. Implémenter des limites de taille/taux pour les réponses HTTP compressées en complément.",
-      "timestamp": "2026-05-20T20:27:05.125007Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet une attaque par déni de service via des mots de passe anormalement longs, exploitant une inefficacité algorithmique dans UserAttributeSimilarityValidator.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.26, 3.2.11 ou 4.0.1 qui corrigent cette faille de performance.",
+      "timestamp": "2026-05-20T22:20:47.311338Z"
     },
     {
-      "cve_id": "CVE-2026-21441",
-      "package": "urllib3",
+      "cve_id": "CVE-2021-45116",
+      "package": "django",
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "La vulnérabilité dans urllib3 concerne une faille dans l'API de streaming qui pourrait permettre à un attaquant d'exploiter le traitement des réponses HTTP chunkées. Bien que le score SRP soit modéré (3.0/10), le CVSS élevé (7.5) indique un impact potentiel important si exploité.",
-      "ai_fix": "Mettre à jour urllib3 vers la dernière version stable qui corrige cette vulnérabilité. Vérifier que les dépendances utilisent bien la version patchée.",
-      "timestamp": "2026-05-20T20:27:11.066347Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-45116. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:20:53.009194Z"
+    },
+    {
+      "cve_id": "CVE-2022-23833",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2022-23833. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:20:58.818653Z"
+    },
+    {
+      "cve_id": "CVE-2024-24680",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2024-24680. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:21:46.334118Z"
+    },
+    {
+      "cve_id": "CVE-2025-64458",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet une attaque par déni de service via une redirection HTTP malveillante exploitant la lenteur de la normalisation NFKC sous Windows. Bien que le score SRP soit faible (3.0/10), le CVSS élevé (7.5) indique un impact potentiel significatif sur les performances.",
+      "ai_fix": "Mettre à jour Django vers les versions 5.1.14, 4.2.26 ou 5.2.8 qui corrigent cette vulnérabilité. Limiter les redirections vers des URLs contrôlées si la mise à jour n'est pas immédiatement possible.",
+      "timestamp": "2026-05-20T22:21:58.618021Z"
+    },
+    {
+      "cve_id": "CVE-2023-41164",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-41164. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:22:36.383559Z"
+    },
+    {
+      "cve_id": "CVE-2023-30861",
+      "package": "flask",
+      "version": "inconnue",
+      "srp_score": 3.0,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans Flask permet une fuite de données sensibles via le cache des proxies lorsque certaines conditions sont réunies. Le risque est modéré (SRP 3.0) car nécessite une configuration spécifique du proxy. Bien que non exploitée activement (EPSS 0.19%), elle pourrait exposer des sessions utilisateurs.",
+      "ai_fix": "Mettre à jour Flask vers la dernière version et configurer les proxies pour ne pas cacher les en-têtes Set-Cookie. Implémenter 'Cache-Control: private' pour les réponses sensibles.",
+      "timestamp": "2026-05-20T22:23:09.039895Z"
+    },
+    {
+      "cve_id": "CVE-2021-44420",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 2.9,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-44420. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:22:14.019933Z"
     },
     {
       "cve_id": "CVE-2026-26007",
@@ -139,9 +379,9 @@
       "version": "inconnue",
       "srp_score": 2.6,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans le package cryptography permet à un attaquant de contourner certaines vérifications de clés cryptographiques, ce qui pourrait conduire à l'acceptation de clés malveillantes. Le risque est modéré (SRP 2.6/10) car l'exploitation nécessite des conditions spécifiques.",
-      "ai_fix": "Mettre à jour le package cryptography vers la version 46.0.5 ou supérieure pour corriger les fonctions affectées de validation des clés publiques.",
-      "timestamp": "2026-05-20T20:25:34.873157Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-26007. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
+      "timestamp": "2026-05-20T22:19:08.604810Z"
     },
     {
       "cve_id": "CVE-2023-23931",
@@ -149,9 +389,9 @@
       "version": "inconnue",
       "srp_score": 2.6,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet de contourner les protections mémoire en manipulant des objets immuables comme des buffers, ce qui pourrait conduire à des corruptions mémoire ou fuites d'information. Le faible score SRP indique un risque limité en pratique.",
-      "ai_fix": "Mettre à jour le package cryptography vers une version corrigée qui valide correctement les types de buffers modifiables avant traitement.",
-      "timestamp": "2026-05-20T20:25:39.730488Z"
+      "ai_explanation": "Cette vulnérabilité permet à des objets immuables comme 'bytes' d'être utilisés dans des opérations cryptographiques censées modifier le buffer, ce qui pourrait mener à des comportements inattendus ou des corruptions de données. Le faible score SRP indique un risque limité en pratique.",
+      "ai_fix": "Mettre à jour le package cryptography vers une version corrigée qui valide correctement les buffers modifiables avant les opérations d'écriture.",
+      "timestamp": "2026-05-20T22:19:14.400492Z"
     },
     {
       "cve_id": "CVE-2023-32681",
@@ -159,79 +399,59 @@
       "version": "inconnue",
       "srp_score": 2.6,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet la fuite des en-têtes Proxy-Authorization lors de redirections HTTPS, exposant potentiellement des identifiants sensibles. Bien que le score SRP soit modéré (2.6/10), le risque principal concerne l'interception de ces informations par des attaquants positionnés sur le réseau.",
-      "ai_fix": "Mettre à jour la bibliothèque Requests vers une version corrigée (>=2.31.0) qui ne transmet plus ces en-têtes lors des redirections.",
-      "timestamp": "2026-05-20T20:26:00.564709Z"
+      "ai_explanation": "Cette vulnérabilité permet la fuite des en-têtes Proxy-Authorization lors de redirections HTTPS, exposant potentiellement des identifiants sensibles. Le risque est modéré (SRP 2.6) car nécessite une configuration spécifique avec proxy.",
+      "ai_fix": "Mettre à jour la bibliothèque requests vers une version corrigée (>=2.31.0) qui ne transmet plus ces en-têtes lors des redirections.",
+      "timestamp": "2026-05-20T22:23:17.661380Z"
     },
     {
-      "cve_id": "CVE-2020-26137",
-      "package": "urllib3",
-      "version": "inconnue",
-      "srp_score": 2.6,
-      "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet l'injection CRLF dans urllib3, permettant à un attaquant d'insérer des en-têtes HTTP malveillants ou de manipuler les requêtes. Le risque est modéré (SRP 2.6) car elle nécessite un contrôle préalable sur la méthode HTTP.",
-      "ai_fix": "Mettre à jour urllib3 vers la version 1.25.9 ou ultérieure pour corriger cette vulnérabilité.",
-      "timestamp": "2026-05-20T20:27:32.502273Z"
-    },
-    {
-      "cve_id": "CVE-2024-37891",
-      "package": "urllib3",
-      "version": "inconnue",
-      "srp_score": 2.6,
-      "decision": "PASSER",
-      "ai_explanation": "La vulnérabilité dans urllib3 permet une fuite accidentelle des en-têtes Proxy-Authorization lors de requêtes HTTP sans proxy, exposant potentiellement des identifiants sensibles. Bien que le risque soit modéré (SRP 2.6), cela pourrait faciliter des attaques de type credential stuffing.",
-      "ai_fix": "Mettre à jour urllib3 vers une version corrigée qui empêche l'envoi accidentel des en-têtes d'authentification proxy. Vérifier également les configurations de proxy pour s'assurer qu'elles sont correctement isolées.",
-      "timestamp": "2026-05-20T20:27:44.915733Z"
-    },
-    {
-      "cve_id": "CVE-2019-11236",
-      "package": "urllib3",
+      "cve_id": "CVE-2021-32052",
+      "package": "django",
       "version": "inconnue",
       "srp_score": 2.5,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité de type CRLF injection dans urllib3 permet à un attaquant d'injecter des en-têtes HTTP malveillants s'il contrôle les paramètres de requête. Bien que le risque soit modéré (CVSS 6.1), l'exploitation nécessite un contrôle préalable des entrées utilisateur.",
-      "ai_fix": "Mettre à jour urllib3 vers la version 1.24.2 ou ultérieure qui corrige cette vulnérabilité. Valider et assainir toutes les entrées utilisateur utilisées dans les requêtes HTTP.",
-      "timestamp": "2026-05-20T20:27:27.244316Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet l'injection d'en-têtes HTTP via des URL contenant des caractères de nouvelle ligne. Bien que le risque soit modéré (SRP 2.5), elle pourrait être exploitée pour des attaques de type response splitting.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.22, 3.1.10 ou 3.2.2 qui corrigent cette faille en bloquant les caractères de contrôle dans URLValidator.",
+      "timestamp": "2026-05-20T22:22:04.180427Z"
     },
     {
-      "cve_id": "CVE-2020-25659",
-      "package": "cryptography",
+      "cve_id": "CVE-2022-22818",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 2.5,
+      "decision": "PASSER",
+      "ai_explanation": "La balise {% debug %} dans Django expose le contexte d'exécution sans encodage approprié, permettant une injection XSS si un attaquant contrôle des entrées affichées. Bien que le risque soit modéré (SRP 2.5), cette vulnérabilité pourrait être exploitée pour voler des sessions ou manipuler l'interface utilisateur.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.27, 3.2.12 ou 4.0.2 qui corrigent cette faille. En attendant la mise à jour, désactiver la balise {% debug %} en production.",
+      "timestamp": "2026-05-20T22:22:31.475716Z"
+    },
+    {
+      "cve_id": "CVE-2024-28219",
+      "package": "Pillow",
       "version": "inconnue",
       "srp_score": 2.4,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet des attaques par minutage (timing attacks) contre le chiffrement RSA, où un attaquant pourrait déduire des informations sensibles en mesurant le temps de traitement des données chiffrées. Bien que le score SRP soit bas (2.4/10), cette faille reste pertinente pour les systèmes sensibles utilisant RSA PKCS#1 v1.5.",
-      "ai_fix": "Mettre à jour la bibliothèque cryptography vers la version 3.3 ou ultérieure qui inclut des protections contre ce type d'attaque. Pour les cas critiques, envisager de migrer vers OAEP (PKCS#1 v2.2) qui est plus résistant aux attaques par minutage.",
-      "timestamp": "2026-05-20T20:25:14.307822Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2024-28219. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
+      "timestamp": "2026-05-20T22:18:38.892664Z"
     },
     {
-      "cve_id": "CVE-2022-40897",
-      "package": "setuptools",
+      "cve_id": "CVE-2026-42308",
+      "package": "Pillow",
       "version": "inconnue",
-      "srp_score": 2.4,
+      "srp_score": 2.2,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité ReDoS dans setuptools permet à un attaquant de provoquer un déni de service via du HTML malveillant. Le risque est modéré (SRP 2.4) car nécessite une interaction utilisateur spécifique.",
-      "ai_fix": "Mettre à jour setuptools vers la version 65.5.1 ou ultérieure pour corriger la vulnérabilité ReDoS.",
-      "timestamp": "2026-05-20T20:26:29.207324Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-42308. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
+      "timestamp": "2026-05-20T22:18:43.806523Z"
     },
     {
-      "cve_id": "CVE-2018-25091",
-      "package": "urllib3",
+      "cve_id": "CVE-2026-42310",
+      "package": "Pillow",
       "version": "inconnue",
-      "srp_score": 2.4,
+      "srp_score": 2.2,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans urllib3 expose les en-têtes d'autorisation lors de redirections cross-origin, risquant de divulguer des identifiants sensibles à des domaines non autorisés ou en clair.",
-      "ai_fix": "Mettre à jour urllib3 vers la version 1.24.2 ou supérieure pour corriger le comportement des en-têtes lors des redirections.",
-      "timestamp": "2026-05-20T20:27:20.971707Z"
-    },
-    {
-      "cve_id": "CVE-2025-50181",
-      "package": "urllib3",
-      "version": "inconnue",
-      "srp_score": 2.4,
-      "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet de désactiver les redirections HTTP dans urllib3 via une mauvaise configuration de PoolManager. Le risque est limité (SRP 2.4) car elle nécessite une configuration spécifique et n'affecte pas les utilisateurs standards de requests/botocore.",
-      "ai_fix": "Mettre à jour urllib3 vers la version 2.5.0 ou supérieure. Vérifier que les instances PoolManager utilisent des paramètres retries valides.",
-      "timestamp": "2026-05-20T20:27:50.700152Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-42310. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
+      "timestamp": "2026-05-20T22:18:48.849318Z"
     },
     {
       "cve_id": "CVE-2024-0727",
@@ -239,9 +459,9 @@
       "version": "inconnue",
       "srp_score": 2.2,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet un DoS via un crash d'OpenSSL lors du traitement de fichiers PKCS12 malveillants. Le risque est modéré (CVSS 5.5) car nécessite un fichier fourni par un attaquant. Aucun acteur de menace connu ne l'exploite actuellement.",
+      "ai_explanation": "Cette vulnérabilité permet un DoS via un crash d'OpenSSL lors du traitement de fichiers PKCS12 malveillants. Le risque est limité car nécessite un fichier spécifique et n'entraîne pas d'exécution de code.",
       "ai_fix": "Mettre à jour la bibliothèque OpenSSL vers une version corrigée. Valider l'origine des fichiers PKCS12 avant traitement.",
-      "timestamp": "2026-05-20T20:25:45.112977Z"
+      "timestamp": "2026-05-20T22:19:24.132087Z"
     },
     {
       "cve_id": "CVE-2024-35195",
@@ -249,9 +469,9 @@
       "version": "inconnue",
       "srp_score": 2.2,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet une attaque de type 'man-in-the-middle' persistante après une première requête non vérifiée. Le risque est modéré (SRP 2.2) car nécessite une configuration initiale dangereuse.",
-      "ai_fix": "Mettre à jour requests vers la version 2.32.0 ou supérieure. Éviter d'utiliser `verify=False` en production.",
-      "timestamp": "2026-05-20T20:26:14.690719Z"
+      "ai_explanation": "Cette vulnérabilité permet une attaque de type 'man-in-the-middle' persistante après une première requête non sécurisée. Le risque est modéré (SRP 2.2) car nécessite une configuration initiale dangereuse.",
+      "ai_fix": "Mettre à jour la bibliothèque requests vers la version 2.32.0 ou supérieure. Éviter d'utiliser `verify=False` en production.",
+      "timestamp": "2026-05-20T22:23:27.649424Z"
     },
     {
       "cve_id": "CVE-2026-25645",
@@ -259,9 +479,39 @@
       "version": "inconnue",
       "srp_score": 2.2,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet une attaque locale par usurpation de fichier via des noms prédictibles dans le répertoire temporaire. Le risque est limité car elle nécessite un accès local et des conditions spécifiques.",
-      "ai_fix": "Mettre à jour la bibliothèque requests vers la version 2.33.0 ou supérieure pour corriger le comportement d'extraction des fichiers zip.",
-      "timestamp": "2026-05-20T20:26:24.441259Z"
+      "ai_explanation": "Cette vulnérabilité permet un attaquant local d'exploiter une condition de race pour écraser des fichiers via des noms prédictibles dans le répertoire temporaire. Le risque est limité car nécessite un accès local et des conditions spécifiques.",
+      "ai_fix": "Mettre à jour la bibliothèque requests vers la version 2.33.0 ou supérieure qui corrige ce comportement en générant des noms de fichiers temporaires aléatoires.",
+      "timestamp": "2026-05-20T22:23:41.834055Z"
+    },
+    {
+      "cve_id": "CVE-2021-45452",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 2.1,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-45452. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:22:19.005168Z"
+    },
+    {
+      "cve_id": "CVE-2024-45231",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 2.1,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2024-45231. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:22:46.169558Z"
+    },
+    {
+      "cve_id": "CVE-2025-48432",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 2.1,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité permet une injection dans les logs Django via des URLs malveillantes, pouvant fausser l'audit ou masquer des activités. Le faible score SRP et EPSS indique un risque limité en pratique.",
+      "ai_fix": "Mettre à jour Django vers les versions 5.2.3, 5.1.11 ou 4.2.23 qui échappent correctement les requêtes dans les logs.",
+      "timestamp": "2026-05-20T22:22:57.985169Z"
     },
     {
       "cve_id": "CVE-2024-47081",
@@ -269,29 +519,39 @@
       "version": "inconnue",
       "srp_score": 2.1,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans la bibliothèque Requests permet une fuite des identifiants .netrc via des URLs malveillantes. Le risque est modéré (SRP 2.1) car l'exploitation nécessite des conditions spécifiques.",
-      "ai_fix": "Mettre à jour Requests vers la version 2.32.4 ou désactiver l'utilisation du fichier .netrc dans les versions antérieures.",
-      "timestamp": "2026-05-20T20:26:19.617444Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2024-47081. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour requests vinconnue.",
+      "timestamp": "2026-05-20T22:23:32.655583Z"
     },
     {
-      "cve_id": "CVE-2026-44431",
-      "package": "urllib3",
+      "cve_id": "CVE-2021-33203",
+      "package": "django",
       "version": "inconnue",
-      "srp_score": 2.1,
+      "srp_score": 2.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet des fuites d'en-têtes sensibles lors de redirections cross-origin via ProxyManager dans urllib3. Bien que le risque soit modéré (SRP 2.1), elle pourrait exposer des données d'authentification.",
-      "ai_fix": "Mettre à jour urllib3 vers la version 2.7.0 ou supérieure pour corriger le comportement des redirections cross-origin.",
-      "timestamp": "2026-05-20T20:27:16.070286Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-33203. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-05-20T22:22:09.122769Z"
     },
     {
-      "cve_id": "CVE-2023-45803",
-      "package": "urllib3",
+      "cve_id": "GHSA-39hc-v87j-747x",
+      "package": "cryptography",
       "version": "inconnue",
-      "srp_score": 1.7,
+      "srp_score": 0.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans urllib3 permet une fuite potentielle de données sensibles via des corps de requête non nettoyés lors de redirections HTTP. Bien que le risque soit faible (SRP 1.7/10), cela pourrait exposer des informations en cas d'attaquant MITM interceptant les requêtes.",
-      "ai_fix": "Mettre à jour urllib3 vers la version 2.0.0 ou supérieure qui corrige ce comportement en supprimant correctement le corps des requêtes lors des redirections.",
-      "timestamp": "2026-05-20T20:27:38.581363Z"
+      "ai_explanation": "Alerte CTI de niveau PASSER pour GHSA-39hc-v87j-747x. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
+      "timestamp": "2026-05-20T22:19:29.036492Z"
+    },
+    {
+      "cve_id": "GHSA-h4gh-qq45-vh27",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 0.0,
+      "decision": "PASSER",
+      "ai_explanation": "Alerte CTI de niveau PASSER pour GHSA-h4gh-qq45-vh27. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
+      "timestamp": "2026-05-20T22:19:33.960588Z"
     }
   ]
 }
