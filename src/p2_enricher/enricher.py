@@ -16,15 +16,26 @@ from concurrent.futures import ThreadPoolExecutor
 # ──────────────────────────────────────────────────────────────────────────────
 EPSS_EXPLOIT_THRESHOLD = 0.50
 
+# ──────────────────────────────────────────────────────────────────────────────
+#  Chemin du cache SQLite — FIXE, indépendant du répertoire de lancement.
+#  On remonte depuis ce fichier pour toujours pointer vers le même endroit.
+#  Tu peux aussi forcer un chemin absolu si tu préfères :
+#    CACHE_PATH = Path("/chemin/absolu/vers/cache.sqlite")
+# ──────────────────────────────────────────────────────────────────────────────
+CACHE_PATH = Path(__file__).resolve().parent / "cache.sqlite"
+
 
 class ThreatEnricher:
     def __init__(self, config_path="config.yaml"):
-        self.config       = self._load_config(config_path)
-        self.nvd_api_key  = os.environ.get("NVD_API_KEY",  "")
-        self.otx_api_key  = os.environ.get("OTX_API_KEY",  "")
-        self._cisa_cache  = None
-        self._cisa_lock   = threading.Lock()
-        self.cache_path   = Path(__file__).parent / "cache.sqlite"
+        self.config      = self._load_config(config_path)
+        self.nvd_api_key = os.environ.get("NVD_API_KEY",  "")
+        self.otx_api_key = os.environ.get("OTX_API_KEY",  "")
+        self._cisa_cache = None
+        self._cisa_lock  = threading.Lock()
+        self.cache_path  = CACHE_PATH
+        self._cache_hits  = 0   # compteur pour le résumé final
+        self._cache_miss  = 0
+        self._lock_stats  = threading.Lock()
         self._init_db()
 
     # ──────────────────────────────────────────────────────────────────────────
@@ -56,8 +67,15 @@ class ThreatEnricher:
     # SQLite cache
     # ──────────────────────────────────────────────────────────────────────────
     def _init_db(self):
+        """
+        Crée la table si elle n'existe pas.
+        Affiche le chemin absolu du fichier pour que l'utilisateur
+        puisse vérifier facilement où il est stocké.
+        """
+        print(f"[*] Cache SQLite : {self.cache_path}")
+        exists_before = self.cache_path.exists()
         try:
-            with sqlite3.connect(self.cache_path, timeout=20) as conn:
+            with sqlite3.connect(str(self.cache_path), timeout=20) as conn:
                 conn.execute("""
                     CREATE TABLE IF NOT EXISTS cve_cache (
                         cve_id        TEXT PRIMARY KEY,
@@ -65,12 +83,19 @@ class ThreatEnricher:
                         timestamp     DATETIME DEFAULT CURRENT_TIMESTAMP
                     )
                 """)
+                count = conn.execute(
+                    "SELECT COUNT(*) FROM cve_cache"
+                ).fetchone()[0]
+            if exists_before:
+                print(f"[*] Cache existant — {count} entrée(s) disponible(s)")
+            else:
+                print(f"[*] Nouveau cache créé (0 entrées)")
         except sqlite3.Error as e:
             print(f"[!] DB init error: {e}")
 
     def _get_cached_vuln(self, cve_id):
         try:
-            with sqlite3.connect(self.cache_path, timeout=20) as conn:
+            with sqlite3.connect(str(self.cache_path), timeout=20) as conn:
                 row = conn.execute(
                     "SELECT enriched_data FROM cve_cache WHERE cve_id = ?",
                     (cve_id,)
@@ -81,7 +106,7 @@ class ThreatEnricher:
 
     def _save_to_cache(self, cve_id, enriched_data):
         try:
-            with sqlite3.connect(self.cache_path, timeout=20) as conn:
+            with sqlite3.connect(str(self.cache_path), timeout=20) as conn:
                 conn.execute(
                     "INSERT OR REPLACE INTO cve_cache (cve_id, enriched_data) VALUES (?, ?)",
                     (cve_id, json.dumps(enriched_data))
@@ -95,16 +120,24 @@ class ThreatEnricher:
     def enrich_vulnerability(self, vuln):
         cve_id = vuln.get("cve_id", "")
         cached = self._get_cached_vuln(cve_id)
+
         if cached:
+            with self._lock_stats:
+                self._cache_hits += 1
+            print(f"  [CACHE HIT]  {cve_id}")
             return cached
+
+        with self._lock_stats:
+            self._cache_miss += 1
+        print(f"  [CACHE MISS] {cve_id} — appel réseau…")
 
         enriched = vuln.copy()
         ti = {}
 
-        # ── NVD (public, pas besoin de clé ; clé = rate limit plus élevé) ──
+        # ── NVD ──
         ti["nvd"] = self.get_nvd_data(cve_id)
 
-        # ── OTX (seulement si clé configurée) ──
+        # ── OTX ──
         if self.otx_api_key:
             otx_data = self.get_otx_data(cve_id)
             ti["otx_indicators"] = otx_data
@@ -112,14 +145,14 @@ class ThreatEnricher:
                 enriched["otx_indicators"] = [otx_data]
         else:
             ti["otx_indicators"] = {"error": "OTX_API_KEY not set – skipped"}
-            print(f"[!] OTX_API_KEY manquant – OTX ignoré pour {cve_id}")
+            print(f"  [!] OTX_API_KEY manquant – OTX ignoré pour {cve_id}")
 
-        # ── CISA KEV (pas de clé requise) ──
+        # ── CISA KEV ──
         cisa_data = self.get_cisa_data(cve_id)
         ti["cisa_kev"]        = cisa_data
         enriched["cisa_kev"] = cisa_data
 
-        # ── FIX : exploit_available enrichi avec EPSS en plus de CISA+OTX ──
+        # ── exploit_available enrichi avec EPSS ──
         epss_score = float(enriched.get("epss_score", 0.0))
 
         otx_has_pulses = (
@@ -146,8 +179,7 @@ class ThreatEnricher:
         return enriched
 
     # ──────────────────────────────────────────────────────────────────────────
-    # Calcul du niveau de risque (CRITICAL / HIGH / MEDIUM / LOW)
-    # Logique : CISA KEV > EPSS élevé > CVSS seul
+    # Calcul du niveau de risque
     # ──────────────────────────────────────────────────────────────────────────
     def _compute_risk_summary(self, enriched, ti):
         cisa_known = ti.get("cisa_kev", {}).get("known_exploited", False)
@@ -182,15 +214,13 @@ class ThreatEnricher:
                 if vulns:
                     cve     = vulns[0].get("cve", {})
                     metrics = cve.get("metrics", {})
-                    # Préférer CVSSv3.1, fallback v3.0 puis v2.0
                     cvss_list = (
                         metrics.get("cvssMetricV31")
                         or metrics.get("cvssMetricV30")
                         or metrics.get("cvssMetricV2")
                         or [{}]
                     )
-                    cvss_data = cvss_list[0].get("cvssData", {})
-                    # Récupérer la description en anglais (en priorité)
+                    cvss_data    = cvss_list[0].get("cvssData", {})
                     descriptions = cve.get("descriptions", [])
                     desc = next(
                         (d.get("value", "") for d in descriptions if d.get("lang") == "en"),
@@ -209,21 +239,16 @@ class ThreatEnricher:
                 return {"error": f"NVD 404 for {cve_id}"}
             return {"error": f"NVD HTTP {resp.status_code}"}
         except requests.Timeout:
-            print(f"[!] NVD timeout pour {cve_id}")
+            print(f"  [!] NVD timeout pour {cve_id}")
             return {"error": "NVD request timed out"}
         except Exception as e:
-            print(f"[!] NVD erreur pour {cve_id}: {e}")
+            print(f"  [!] NVD erreur pour {cve_id}: {e}")
             return {"error": f"NVD error: {e}"}
 
     # ──────────────────────────────────────────────────────────────────────────
-    # OTX – endpoint corrigé (pulse search)
+    # OTX — endpoint corrigé, timeout 30 s
     # ──────────────────────────────────────────────────────────────────────────
     def get_otx_data(self, cve_id):
-        """
-        Endpoint correct : /api/v1/search/pulses/?q={cve_id}
-        L'ancien /api/v1/indicators/vulnerability/{id} renvoie 404 sur la plupart des CVE.
-        Timeout augmenté à 30 s pour les connexions lentes.
-        """
         try:
             url     = f"https://otx.alienvault.com/api/v1/search/pulses/?q={cve_id}&limit=10"
             headers = {"X-OTX-API-KEY": self.otx_api_key}
@@ -240,14 +265,14 @@ class ThreatEnricher:
                 return {"error": "OTX 401 – clé API invalide"}
             return {"error": f"OTX HTTP {resp.status_code}"}
         except requests.Timeout:
-            print(f"[!] OTX timeout pour {cve_id}")
+            print(f"  [!] OTX timeout pour {cve_id}")
             return {"error": "OTX request timed out"}
         except Exception as e:
-            print(f"[!] OTX erreur pour {cve_id}: {e}")
+            print(f"  [!] OTX erreur pour {cve_id}: {e}")
             return {"error": f"OTX error: {e}"}
 
     # ──────────────────────────────────────────────────────────────────────────
-    # CISA KEV – thread-safe, téléchargement unique par run
+    # CISA KEV — thread-safe, téléchargement unique par run
     # ──────────────────────────────────────────────────────────────────────────
     def get_cisa_data(self, cve_id):
         if self._cisa_cache is not None:
@@ -261,7 +286,7 @@ class ThreatEnricher:
                     if resp.status_code == 200:
                         self._cisa_cache = resp.json()
                         count = len(self._cisa_cache.get("vulnerabilities", []))
-                        print(f"[*] CISA KEV chargé – {count} entrées")
+                        print(f"[*] CISA KEV chargé — {count} entrées")
                     else:
                         self._cisa_cache = {}
                         print(f"[!] CISA KEV HTTP {resp.status_code}")
@@ -291,14 +316,16 @@ class ThreatEnricher:
     def process_vulnerabilities(self, raw_data):
         vulns = raw_data.get("vulnerabilities", [])
         print(f"[*] Enrichissement de {len(vulns)} vulnérabilités (5 threads)…")
+        print(f"[*] Chaque [CACHE HIT] = 0 appel réseau | [CACHE MISS] = appels NVD+OTX+CISA")
+        print("-" * 60)
         # Pré-charger CISA avant les threads pour éviter la race condition
         self.get_cisa_data("__preload__")
         with ThreadPoolExecutor(max_workers=5) as ex:
             enriched = list(ex.map(self.enrich_vulnerability, vulns))
+        print("-" * 60)
         return enriched
 
     def generate_enriched_report(self, enriched_vulns, output_path):
-        # ── Statistiques de synthèse ──
         kev_hits     = sum(1 for v in enriched_vulns if v.get("cisa_kev", {}).get("known_exploited"))
         exploit_hits = sum(1 for v in enriched_vulns if v.get("threat_intelligence", {}).get("exploit_available"))
         high_epss    = sum(1 for v in enriched_vulns if float(v.get("epss_score", 0)) >= EPSS_EXPLOIT_THRESHOLD)
@@ -307,15 +334,17 @@ class ThreatEnricher:
         report = {
             "enrichment_metadata": {
                 "timestamp":             datetime.utcnow().isoformat() + "Z",
-                "enricher_version":      "1.2.0",
+                "enricher_version":      "1.3.0",
                 "total_vulnerabilities": len(enriched_vulns),
                 "sources_used":          ["NVD", "OTX", "CISA KEV", "EPSS"],
                 "statistics": {
-                    "in_cisa_kev":          kev_hits,
-                    "exploit_available":    exploit_hits,
-                    "high_epss":            high_epss,
-                    "critical_severity":    critical_cnt,
-                    "epss_threshold_used":  EPSS_EXPLOIT_THRESHOLD,
+                    "in_cisa_kev":         kev_hits,
+                    "exploit_available":   exploit_hits,
+                    "high_epss":           high_epss,
+                    "critical_severity":   critical_cnt,
+                    "epss_threshold_used": EPSS_EXPLOIT_THRESHOLD,
+                    "cache_hits":          self._cache_hits,
+                    "cache_misses":        self._cache_miss,
                 },
             },
             "enriched_vulnerabilities": enriched_vulns,
@@ -334,11 +363,11 @@ class ThreatEnricher:
             input_path="../../shared/1_raw_results.json",
             output_path="../../shared/2_enriched.json"):
         print("=" * 60)
-        print("  P2 THREAT INTELLIGENCE ENRICHER  (v1.2 – fixed)")
+        print("  P2 THREAT INTELLIGENCE ENRICHER  (v1.3 – cache fix)")
         print("=" * 60)
         print(f"[*] NVD API key  : {'configurée' if self.nvd_api_key else 'absente (rate limit public)'}")
         print(f"[*] OTX API key  : {'configurée' if self.otx_api_key else 'ABSENTE – OTX ignoré'}")
-        print(f"[*] EPSS seuil   : {EPSS_EXPLOIT_THRESHOLD} (exploit_available=True si EPSS ≥ seuil)")
+        print(f"[*] EPSS seuil   : {EPSS_EXPLOIT_THRESHOLD}")
         print(f"[*] Lecture      : {input_path}")
 
         raw_data       = self.load_raw_data(input_path)
@@ -346,14 +375,25 @@ class ThreatEnricher:
         report         = self.generate_enriched_report(enriched_vulns, output_path)
 
         stats = report["enrichment_metadata"]["statistics"]
+        total = len(enriched_vulns)
+        hits  = stats["cache_hits"]
+        miss  = stats["cache_misses"]
+        pct   = round(hits / total * 100) if total else 0
+
         print(f"\n{'='*60}")
         print("  RÉSUMÉ D'ENRICHISSEMENT")
         print(f"{'='*60}")
-        print(f"  Total enrichi          : {len(enriched_vulns)}")
+        print(f"  Total enrichi          : {total}")
+        print(f"  Cache HIT              : {hits}/{total} ({pct}%)")
+        print(f"  Cache MISS (réseau)    : {miss}/{total}")
+        if miss == 0:
+            print(f"  Durée estimée          : < 10 secondes (tout depuis le cache)")
+        elif miss == total:
+            print(f"  Durée estimée          : ~5 min (premier run, pas de cache)")
+        else:
+            print(f"  Durée estimée          : ~{miss * 6 // 5} secondes (seulement {miss} appels réseau)")
         print(f"  Dans CISA KEV          : {stats['in_cisa_kev']}")
         print(f"  exploit_available=True : {stats['exploit_available']}")
-        print(f"    dont CISA KEV        : {stats['in_cisa_kev']}")
-        print(f"    dont EPSS ≥ {EPSS_EXPLOIT_THRESHOLD}    : {stats['high_epss']}")
         print(f"  Sévérité CRITICAL      : {stats['critical_severity']}")
         print(f"  Sortie                 : {output_path}")
         print(f"{'='*60}\n")
