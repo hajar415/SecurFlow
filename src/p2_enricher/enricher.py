@@ -1,406 +1,262 @@
+#!/usr/bin/env python3
+"""
+P2 Threat Intelligence Enricher
+Part of the CTI Pipeline Project
+
+This module processes raw vulnerability data from P1 and enriches it with
+threat intelligence from multiple sources (NVD, OTX, CISA KEV).
+"""
+
 import json
 import os
 import sys
-import threading
 import requests
 import sqlite3
+import time
 import yaml
 from datetime import datetime
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
-
-# ──────────────────────────────────────────────────────────────────────────────
-#  Seuil EPSS au-delà duquel exploit_available = True même sans CISA KEV/OTX.
-#  0.50 = 50 % de probabilité d'exploitation réelle selon le modèle FIRST EPSS.
-# ──────────────────────────────────────────────────────────────────────────────
-EPSS_EXPLOIT_THRESHOLD = 0.50
-
-# ──────────────────────────────────────────────────────────────────────────────
-#  Chemin du cache SQLite — FIXE, indépendant du répertoire de lancement.
-#  On remonte depuis ce fichier pour toujours pointer vers le même endroit.
-#  Tu peux aussi forcer un chemin absolu si tu préfères :
-#    CACHE_PATH = Path("/chemin/absolu/vers/cache.sqlite")
-# ──────────────────────────────────────────────────────────────────────────────
-CACHE_PATH = Path(__file__).resolve().parent / "cache.sqlite"
-
-
 class ThreatEnricher:
     def __init__(self, config_path="config.yaml"):
-        self.config      = self._load_config(config_path)
-        self.nvd_api_key = os.environ.get("NVD_API_KEY",  "")
-        self.otx_api_key = os.environ.get("OTX_API_KEY",  "")
-        self._cisa_cache = None
-        self._cisa_lock  = threading.Lock()
-        self.cache_path  = CACHE_PATH
-        self._cache_hits  = 0   # compteur pour le résumé final
-        self._cache_miss  = 0
-        self._lock_stats  = threading.Lock()
+        """Initialize the threat enricher with configuration."""
+        self.config = self.load_config(config_path)
+        self.nvd_api_key = os.environ.get("NVD_API_KEY", "")
+        self.otx_api_key = os.environ.get("OTX_API_KEY", "")
+        self.cisa_api_key = os.environ.get("CISA_API_KEY", "")
+        self._cisa_cache = None  # Session cache to avoid redundant downloads
+        self.cache_path = Path(__file__).parent / "cache.sqlite"
         self._init_db()
-
-    # ──────────────────────────────────────────────────────────────────────────
-    # Config & I/O
-    # ──────────────────────────────────────────────────────────────────────────
-    def _load_config(self, config_path):
+        
+    def load_config(self, config_path):
+        """Load configuration from YAML file."""
         try:
-            with open(config_path, encoding="utf-8") as f:
+            with open(config_path, "r", encoding="utf-8") as f:
                 return yaml.safe_load(f)
         except FileNotFoundError:
             print(f"[!] Config file {config_path} not found, using defaults")
             return {}
         except yaml.YAMLError as e:
-            print(f"[!] Error parsing config: {e}")
+            print(f"[!] Error parsing config file: {e}")
             return {}
-
+    
     def load_raw_data(self, input_path):
+        """Load raw vulnerability data from P1."""
         try:
-            with open(input_path, encoding="utf-8") as f:
+            with open(input_path, "r", encoding="utf-8") as f:
                 return json.load(f)
         except FileNotFoundError:
             print(f"[!] Input file {input_path} not found")
             sys.exit(1)
         except json.JSONDecodeError as e:
-            print(f"[!] JSON parse error: {e}")
+            print(f"[!] Error parsing JSON file: {e}")
             sys.exit(1)
-
-    # ──────────────────────────────────────────────────────────────────────────
-    # SQLite cache
-    # ──────────────────────────────────────────────────────────────────────────
+    
     def _init_db(self):
-        """
-        Crée la table si elle n'existe pas.
-        Affiche le chemin absolu du fichier pour que l'utilisateur
-        puisse vérifier facilement où il est stocké.
-        """
-        print(f"[*] Cache SQLite : {self.cache_path}")
-        exists_before = self.cache_path.exists()
+        """Initialize the SQLite cache database."""
         try:
-            with sqlite3.connect(str(self.cache_path), timeout=20) as conn:
+            with sqlite3.connect(self.cache_path, timeout=20) as conn:
                 conn.execute("""
                     CREATE TABLE IF NOT EXISTS cve_cache (
-                        cve_id        TEXT PRIMARY KEY,
+                        cve_id TEXT PRIMARY KEY,
                         enriched_data TEXT,
-                        timestamp     DATETIME DEFAULT CURRENT_TIMESTAMP
+                        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
                     )
                 """)
-                count = conn.execute(
-                    "SELECT COUNT(*) FROM cve_cache"
-                ).fetchone()[0]
-            if exists_before:
-                print(f"[*] Cache existant — {count} entrée(s) disponible(s)")
-            else:
-                print(f"[*] Nouveau cache créé (0 entrées)")
         except sqlite3.Error as e:
-            print(f"[!] DB init error: {e}")
+            print(f"[!] Database initialization error: {e}")
 
     def _get_cached_vuln(self, cve_id):
+        """Retrieve enriched data from cache if it exists."""
         try:
-            with sqlite3.connect(str(self.cache_path), timeout=20) as conn:
-                row = conn.execute(
-                    "SELECT enriched_data FROM cve_cache WHERE cve_id = ?",
-                    (cve_id,)
-                ).fetchone()
+            with sqlite3.connect(self.cache_path, timeout=20) as conn:
+                cursor = conn.execute("SELECT enriched_data FROM cve_cache WHERE cve_id = ?", (cve_id,))
+                row = cursor.fetchone()
                 return json.loads(row[0]) if row else None
         except Exception:
             return None
 
     def _save_to_cache(self, cve_id, enriched_data):
+        """Save enriched data to the SQLite cache."""
         try:
-            with sqlite3.connect(str(self.cache_path), timeout=20) as conn:
+            with sqlite3.connect(self.cache_path, timeout=20) as conn:
                 conn.execute(
                     "INSERT OR REPLACE INTO cve_cache (cve_id, enriched_data) VALUES (?, ?)",
                     (cve_id, json.dumps(enriched_data))
                 )
         except sqlite3.Error as e:
-            print(f"[!] Cache write error: {e}")
+            print(f"[!] Error saving to cache: {e}")
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # Enrichissement principal
-    # ──────────────────────────────────────────────────────────────────────────
     def enrich_vulnerability(self, vuln):
+        """Enrich a single vulnerability with threat intelligence."""
         cve_id = vuln.get("cve_id", "")
-        cached = self._get_cached_vuln(cve_id)
-
-        if cached:
-            with self._lock_stats:
-                self._cache_hits += 1
-            print(f"  [CACHE HIT]  {cve_id}")
-            return cached
-
-        with self._lock_stats:
-            self._cache_miss += 1
-        print(f"  [CACHE MISS] {cve_id} — appel réseau…")
+        cached_data = self._get_cached_vuln(cve_id)
+        if cached_data:
+            return cached_data
 
         enriched = vuln.copy()
-        ti = {}
-
-        # ── NVD ──
-        ti["nvd"] = self.get_nvd_data(cve_id)
-
-        # ── OTX ──
+        enriched["threat_intelligence"] = {}
+        
+        # NVD enrichment
+        if self.nvd_api_key:
+            enriched["threat_intelligence"]["nvd"] = self.get_nvd_data(cve_id)
+        
+        # OTX enrichment
         if self.otx_api_key:
             otx_data = self.get_otx_data(cve_id)
-            ti["otx_indicators"] = otx_data
+            enriched["threat_intelligence"]["otx_indicators"] = otx_data
+            # Only expose at root if actual threat pulses were found
             if "error" not in otx_data and otx_data.get("pulses"):
                 enriched["otx_indicators"] = [otx_data]
-        else:
-            ti["otx_indicators"] = {"error": "OTX_API_KEY not set – skipped"}
-            print(f"  [!] OTX_API_KEY manquant – OTX ignoré pour {cve_id}")
-
-        # ── CISA KEV ──
+        
+        # CISA KEV enrichment
         cisa_data = self.get_cisa_data(cve_id)
-        ti["cisa_kev"]        = cisa_data
+        enriched["threat_intelligence"]["cisa_kev"] = cisa_data
         enriched["cisa_kev"] = cisa_data
 
-        # ── exploit_available enrichi avec EPSS ──
-        epss_score = float(enriched.get("epss_score", 0.0))
-
+        # exploit_available = True si CISA KEV OU OTX a des pulses
         otx_has_pulses = (
-            "error" not in ti.get("otx_indicators", {})
-            and ti.get("otx_indicators", {}).get("indicators_count", 0) > 0
+            "error" not in enriched["threat_intelligence"].get("otx_indicators", {})
+            and enriched["threat_intelligence"].get("otx_indicators", {}).get("indicators_count", 0) > 0
         )
 
-        exploit_reason = []
-        if cisa_data.get("known_exploited"):
-            exploit_reason.append("CISA_KEV")
-        if otx_has_pulses:
-            exploit_reason.append("OTX_PULSES")
-        if epss_score >= EPSS_EXPLOIT_THRESHOLD:
-            exploit_reason.append(f"EPSS={epss_score:.4f}")
+        if cisa_data.get("known_exploited") or otx_has_pulses:
+            enriched["threat_intelligence"]["exploit_available"] = True
+        else:
+            enriched["threat_intelligence"]["exploit_available"] = False
 
-        ti["exploit_available"]        = bool(exploit_reason)
-        ti["exploit_available_reason"] = ", ".join(exploit_reason) if exploit_reason else "none"
-
-        # ── Résumé du risque ──
-        ti["risk_summary"] = self._compute_risk_summary(enriched, ti)
-
-        enriched["threat_intelligence"] = ti
         self._save_to_cache(cve_id, enriched)
         return enriched
-
-    # ──────────────────────────────────────────────────────────────────────────
-    # Calcul du niveau de risque
-    # ──────────────────────────────────────────────────────────────────────────
-    def _compute_risk_summary(self, enriched, ti):
-        cisa_known = ti.get("cisa_kev", {}).get("known_exploited", False)
-        epss       = float(enriched.get("epss_score", 0.0))
-        cvss       = float(enriched.get("cvss_score", 0.0))
-
-        if cisa_known:
-            return "CRITICAL – exploité dans la nature (CISA KEV)"
-        if epss >= 0.90:
-            return f"CRITICAL – EPSS {epss:.0%} : exploitation très probable"
-        if epss >= 0.50:
-            return f"HIGH – EPSS {epss:.0%} : exploitation probable"
-        if cvss >= 9.0:
-            return f"HIGH – CVSS {cvss} sans exploitation connue"
-        if cvss >= 7.0:
-            return f"MEDIUM – CVSS {cvss}"
-        return f"LOW – CVSS {cvss}"
-
-    # ──────────────────────────────────────────────────────────────────────────
-    # NVD
-    # ──────────────────────────────────────────────────────────────────────────
+    
     def get_nvd_data(self, cve_id):
-        if not cve_id.startswith("CVE-"):
-            return {"error": "Not a CVE identifier – NVD skipped"}
+        """Get vulnerability data from NVD."""
         try:
-            url     = f"https://services.nvd.nist.gov/rest/json/cves/2.0?cveId={cve_id}"
+            url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?cveId={cve_id}"
             headers = {"apiKey": self.nvd_api_key} if self.nvd_api_key else {}
-            resp    = requests.get(url, headers=headers, timeout=15)
-            if resp.status_code == 200:
-                data  = resp.json()
-                vulns = data.get("vulnerabilities", [])
-                if vulns:
-                    cve     = vulns[0].get("cve", {})
-                    metrics = cve.get("metrics", {})
-                    cvss_list = (
-                        metrics.get("cvssMetricV31")
-                        or metrics.get("cvssMetricV30")
-                        or metrics.get("cvssMetricV2")
-                        or [{}]
-                    )
-                    cvss_data    = cvss_list[0].get("cvssData", {})
-                    descriptions = cve.get("descriptions", [])
-                    desc = next(
-                        (d.get("value", "") for d in descriptions if d.get("lang") == "en"),
-                        descriptions[0].get("value", "No description") if descriptions else "No description"
-                    )
+            
+            response = requests.get(url, headers=headers, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("vulnerabilities"):
+                    vuln_data = data["vulnerabilities"][0]
                     return {
-                        "description":    desc,
-                        "published_date": cve.get("published", ""),
-                        "modified_date":  cve.get("lastModified", ""),
-                        "cvss_score":     cvss_data.get("baseScore", 0.0),
-                        "severity":       cvss_data.get("baseSeverity", "UNKNOWN"),
-                        "vector_string":  cvss_data.get("vectorString", ""),
+                        "description": vuln_data.get("cve", {}).get("description", "No description"),
+                        "published_date": vuln_data.get("cve", {}).get("published", ""),
+                        "modified_date": vuln_data.get("cve", {}).get("lastModified", ""),
+                        "cvss_score": vuln_data.get("cve", {}).get("metrics", {}).get("cvssMetricV31", [{}])[0].get("cvssData", {}).get("baseScore", 0.0),
+                        "severity": vuln_data.get("cve", {}).get("metrics", {}).get("cvssMetricV31", [{}])[0].get("cvssData", {}).get("baseSeverity", "UNKNOWN")
                     }
-                return {"error": f"CVE not found in NVD: {cve_id}"}
-            if resp.status_code == 404:
-                return {"error": f"NVD 404 for {cve_id}"}
-            return {"error": f"NVD HTTP {resp.status_code}"}
-        except requests.Timeout:
-            print(f"  [!] NVD timeout pour {cve_id}")
-            return {"error": "NVD request timed out"}
+            return {"error": "NVD data not available"}
         except Exception as e:
-            print(f"  [!] NVD erreur pour {cve_id}: {e}")
-            return {"error": f"NVD error: {e}"}
-
-    # ──────────────────────────────────────────────────────────────────────────
-    # OTX — endpoint corrigé, timeout 30 s
-    # ──────────────────────────────────────────────────────────────────────────
+            print(f"[!] NVD API error for {cve_id}: {e}")
+            return {"error": f"NVD API error: {str(e)}"}
+    
     def get_otx_data(self, cve_id):
+        """Get threat indicators from OTX."""
         try:
-            url     = f"https://otx.alienvault.com/api/v1/search/pulses/?q={cve_id}&limit=10"
+            url = f"https://otx.alienvault.com/api/v1/indicators/vulnerability/{cve_id}"
             headers = {"X-OTX-API-KEY": self.otx_api_key}
-            resp    = requests.get(url, headers=headers, timeout=30)
-            if resp.status_code == 200:
-                data   = resp.json()
-                pulses = data.get("results", [])
+            
+            response = requests.get(url, headers=headers, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
                 return {
-                    "pulses":           pulses,
-                    "indicators_count": len(pulses),
-                    "last_seen":        pulses[0].get("created", "") if pulses else "",
+                    "pulses": data.get("pulses", []),
+                    "indicators_count": len(data.get("pulses", [])),
+                    "last_seen": data.get("pulses", [{}])[0].get("created", "") if data.get("pulses") else ""
                 }
-            if resp.status_code == 401:
-                return {"error": "OTX 401 – clé API invalide"}
-            return {"error": f"OTX HTTP {resp.status_code}"}
-        except requests.Timeout:
-            print(f"  [!] OTX timeout pour {cve_id}")
-            return {"error": "OTX request timed out"}
+            return {"error": "OTX data not available"}
         except Exception as e:
-            print(f"  [!] OTX erreur pour {cve_id}: {e}")
-            return {"error": f"OTX error: {e}"}
-
-    # ──────────────────────────────────────────────────────────────────────────
-    # CISA KEV — thread-safe, téléchargement unique par run
-    # ──────────────────────────────────────────────────────────────────────────
+            print(f"[!] OTX API error for {cve_id}: {e}")
+            return {"error": f"OTX API error: {str(e)}"}
+    
     def get_cisa_data(self, cve_id):
-        if self._cisa_cache is not None:
-            return self._search_cisa(cve_id)
-
-        with self._cisa_lock:
+        """Get vulnerability data from CISA KEV catalog."""
+        try:
             if self._cisa_cache is None:
-                try:
-                    url  = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
-                    resp = requests.get(url, timeout=20)
-                    if resp.status_code == 200:
-                        self._cisa_cache = resp.json()
-                        count = len(self._cisa_cache.get("vulnerabilities", []))
-                        print(f"[*] CISA KEV chargé — {count} entrées")
-                    else:
-                        self._cisa_cache = {}
-                        print(f"[!] CISA KEV HTTP {resp.status_code}")
-                except Exception as e:
-                    self._cisa_cache = {}
-                    print(f"[!] CISA KEV erreur de téléchargement : {e}")
+                url = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+                response = requests.get(url, timeout=10)
+                if response.status_code == 200:
+                    self._cisa_cache = response.json()
 
-        return self._search_cisa(cve_id)
-
-    def _search_cisa(self, cve_id):
-        for vuln in self._cisa_cache.get("vulnerabilities", []):
-            if vuln.get("cveID") == cve_id:
-                return {
-                    "known_exploited": True,
-                    "notes":           vuln.get("notes", ""),
-                    "date_added":      vuln.get("dateAdded", ""),
-                    "due_date":        vuln.get("dueDate", ""),
-                    "required_action": vuln.get("requiredAction", "Apply updates"),
-                    "product":         vuln.get("product", ""),
-                    "vendor":          vuln.get("vendorProject", ""),
-                }
-        return {"known_exploited": False}
-
-    # ──────────────────────────────────────────────────────────────────────────
-    # Orchestration
-    # ──────────────────────────────────────────────────────────────────────────
+            if self._cisa_cache:
+                for vuln in self._cisa_cache.get("vulnerabilities", []):
+                    if vuln.get("cveID") == cve_id:
+                        return {
+                            "known_exploited": True,
+                            "notes": vuln.get("notes", "Known to be exploited"),
+                            "date_added": vuln.get("dateAdded", ""),
+                            "due_date": vuln.get("dueDate", ""),
+                            "required_action": vuln.get("requiredAction", "Apply updates")
+                        }
+            return {"error": "Not in CISA KEV catalog"}
+        except Exception as e:
+            print(f"[!] CISA API error for {cve_id}: {e}")
+            return {"error": f"CISA API error: {str(e)}"}
+    
     def process_vulnerabilities(self, raw_data):
-        vulns = raw_data.get("vulnerabilities", [])
-        print(f"[*] Enrichissement de {len(vulns)} vulnérabilités (5 threads)…")
-        print(f"[*] Chaque [CACHE HIT] = 0 appel réseau | [CACHE MISS] = appels NVD+OTX+CISA")
-        print("-" * 60)
-        # Pré-charger CISA avant les threads pour éviter la race condition
-        self.get_cisa_data("__preload__")
-        with ThreadPoolExecutor(max_workers=5) as ex:
-            enriched = list(ex.map(self.enrich_vulnerability, vulns))
-        print("-" * 60)
-        return enriched
+        """Process all vulnerabilities with enrichment."""
+        vulnerabilities = raw_data.get("vulnerabilities", [])
+        
+        print(f"[*] Enriching {len(vulnerabilities)} vulnerabilities using 5 parallel threads...")
 
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            # Correctly map the class method and use the local list variable
+            enriched_vulns = list(executor.map(self.enrich_vulnerability, vulnerabilities))
+
+        return enriched_vulns
+    
     def generate_enriched_report(self, enriched_vulns, output_path):
-        kev_hits     = sum(1 for v in enriched_vulns if v.get("cisa_kev", {}).get("known_exploited"))
-        exploit_hits = sum(1 for v in enriched_vulns if v.get("threat_intelligence", {}).get("exploit_available"))
-        high_epss    = sum(1 for v in enriched_vulns if float(v.get("epss_score", 0)) >= EPSS_EXPLOIT_THRESHOLD)
-        critical_cnt = sum(1 for v in enriched_vulns if v.get("severity") == "CRITICAL")
-
-        report = {
+        """Generate and save the enriched vulnerability report."""
+        report_data = {
             "enrichment_metadata": {
-                "timestamp":             datetime.utcnow().isoformat() + "Z",
-                "enricher_version":      "1.3.0",
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "enricher_version": "1.0.0",
                 "total_vulnerabilities": len(enriched_vulns),
-                "sources_used":          ["NVD", "OTX", "CISA KEV", "EPSS"],
-                "statistics": {
-                    "in_cisa_kev":         kev_hits,
-                    "exploit_available":   exploit_hits,
-                    "high_epss":           high_epss,
-                    "critical_severity":   critical_cnt,
-                    "epss_threshold_used": EPSS_EXPLOIT_THRESHOLD,
-                    "cache_hits":          self._cache_hits,
-                    "cache_misses":        self._cache_miss,
-                },
+                "sources_used": ["NVD", "OTX", "CISA KEV"]
             },
-            "enriched_vulnerabilities": enriched_vulns,
+            "enriched_vulnerabilities": enriched_vulns
         }
-
-        os.makedirs(
-            os.path.dirname(output_path) if os.path.dirname(output_path) else ".",
-            exist_ok=True
-        )
+        
+        # Save to file
+        os.makedirs(os.path.dirname(output_path) if os.path.dirname(output_path) else ".", exist_ok=True)
         with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(report, f, indent=2, ensure_ascii=False)
-        print(f"[*] Rapport enrichi sauvegardé → {output_path}")
-        return report
-
-    def run(self,
-            input_path="../../shared/1_raw_results.json",
-            output_path="../../shared/2_enriched.json"):
+            json.dump(report_data, f, indent=2, ensure_ascii=False)
+        
+        print(f"[*] Enriched report saved to: {output_path}")
+        return report_data
+    
+    def run(self, input_path="../../shared/1_raw_results.json", output_path="../../shared/2_enriched.json"):
+        """Run the complete enrichment process."""
         print("=" * 60)
-        print("  P2 THREAT INTELLIGENCE ENRICHER  (v1.3 – cache fix)")
+        print("  P2 THREAT INTELLIGENCE ENRICHER")
         print("=" * 60)
-        print(f"[*] NVD API key  : {'configurée' if self.nvd_api_key else 'absente (rate limit public)'}")
-        print(f"[*] OTX API key  : {'configurée' if self.otx_api_key else 'ABSENTE – OTX ignoré'}")
-        print(f"[*] EPSS seuil   : {EPSS_EXPLOIT_THRESHOLD}")
-        print(f"[*] Lecture      : {input_path}")
-
-        raw_data       = self.load_raw_data(input_path)
+        
+        # Load raw data
+        print(f"[*] Loading raw data from: {input_path}")
+        raw_data = self.load_raw_data(input_path)
+        
+        # Process vulnerabilities
         enriched_vulns = self.process_vulnerabilities(raw_data)
-        report         = self.generate_enriched_report(enriched_vulns, output_path)
-
-        stats = report["enrichment_metadata"]["statistics"]
-        total = len(enriched_vulns)
-        hits  = stats["cache_hits"]
-        miss  = stats["cache_misses"]
-        pct   = round(hits / total * 100) if total else 0
-
+        
+        # Generate report
+        report_data = self.generate_enriched_report(enriched_vulns, output_path)
+        
+        # Print summary
         print(f"\n{'='*60}")
-        print("  RÉSUMÉ D'ENRICHISSEMENT")
+        print("  ENRICHMENT SUMMARY")
         print(f"{'='*60}")
-        print(f"  Total enrichi          : {total}")
-        print(f"  Cache HIT              : {hits}/{total} ({pct}%)")
-        print(f"  Cache MISS (réseau)    : {miss}/{total}")
-        if miss == 0:
-            print(f"  Durée estimée          : < 10 secondes (tout depuis le cache)")
-        elif miss == total:
-            print(f"  Durée estimée          : ~5 min (premier run, pas de cache)")
-        else:
-            print(f"  Durée estimée          : ~{miss * 6 // 5} secondes (seulement {miss} appels réseau)")
-        print(f"  Dans CISA KEV          : {stats['in_cisa_kev']}")
-        print(f"  exploit_available=True : {stats['exploit_available']}")
-        print(f"  Sévérité CRITICAL      : {stats['critical_severity']}")
-        print(f"  Sortie                 : {output_path}")
+        print(f"  Total vulnerabilities enriched: {len(enriched_vulns)}")
+        print(f"  Enrichment report: {output_path}")
         print(f"{'='*60}\n")
-        return report
+        
+        return report_data
 
 
 def main():
+    """Main entry point for the threat enricher."""
+    # Initialize and run enricher
     enricher = ThreatEnricher()
     return enricher.run()
 
