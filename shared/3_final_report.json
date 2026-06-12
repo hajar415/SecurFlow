@@ -1,12 +1,12 @@
 {
   "decision_metadata": {
-    "timestamp": "2026-06-11T06:59:04.735520Z",
+    "timestamp": "2026-06-12T06:51:33.835324Z",
     "engine_version": "1.0.0",
     "config_used": {
       "high_context_components": [
         "psycopg2",
-        "mongoose",
         "sequelize",
+        "mongoose",
         "typeorm",
         "sqlalchemy"
       ],
@@ -16,22 +16,42 @@
     },
     "total_processed": 55,
     "decisions": {
-      "BLOQUER": 4,
-      "ALERTER": 10,
-      "PASSER": 41
+      "BLOQUER": 5,
+      "ALERTER": 16,
+      "PASSER": 34
     },
-    "average_srp": 3.6
+    "average_srp": 4.1
   },
   "vulnerability_decisions": [
+    {
+      "cve_id": "CVE-2023-4863",
+      "package": "Pillow",
+      "version": "inconnue",
+      "srp_score": 9.3,
+      "decision": "BLOQUER",
+      "ai_explanation": "Cette vulnérabilité critique (CVE-2023-4863) dans libwebp permet un heap buffer overflow via une page HTML malveillante, conduisant à une écriture mémoire hors limites. Des attaques zero-day actives exploitant cette faille ont été observées dans Chrome. La combinaison du haut score EPSS (0.933) et de la présence dans le catalogue KEV de la CISA en fait une cible prioritaire pour les attaquants.",
+      "ai_fix": "Mettre à jour immédiatement Pillow et toutes les dépendances utilisant libwebp vers les versions corrigées (libwebp >=1.3.2). Vérifier également les mises à jour de Chrome/Chromium.",
+      "timestamp": "2026-06-12T06:46:51.046180Z"
+    },
     {
       "cve_id": "CVE-2022-34265",
       "package": "django",
       "version": "inconnue",
       "srp_score": 8.7,
       "decision": "BLOQUER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet des injections SQL via les fonctions Trunc() et Extract() si des données non fiables sont utilisées. Avec un CVSS de 9.8, elle est critique et facilement exploitable. Bien que non listée dans le KEV, son EPSS élevé (0.9283) indique une forte probabilité d'exploitation.",
-      "ai_fix": "Mettre à jour Django vers les versions 3.2.14 ou 4.0.6+. Valider systématiquement les entrées utilisateur pour les paramètres kind/lookup_name.",
-      "timestamp": "2026-06-11T06:55:44.804954Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet des injections SQL via les fonctions Trunc() et Extract() si des données non fiables sont utilisées comme paramètres. Avec un CVSS de 9.8, elle est trivialement exploitable à distance sans authentification.",
+      "ai_fix": "Mettre à jour Django vers la version 3.2.14 ou 4.0.6. Valider systématiquement les paramètres kind/lookup_name avec une liste blanche stricte.",
+      "timestamp": "2026-06-12T06:48:41.882198Z"
+    },
+    {
+      "cve_id": "CVE-2023-0286",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 8.6,
+      "decision": "BLOQUER",
+      "ai_explanation": "This type confusion vulnerability in X.400 address processing could allow attackers to manipulate certificate validation, potentially leading to impersonation or MITM attacks. The high EPSS score (0.8833) indicates active exploitation attempts in the wild. Multiple threat actors including ransomware groups are known to exploit OpenSSL vulnerabilities.",
+      "ai_fix": "Immediately update the cryptography package to a patched version (>= 39.0.0 for Python cryptography). Verify all certificate chains in your application as they might have been compromised.",
+      "timestamp": "2026-06-12T06:47:36.294888Z"
     },
     {
       "cve_id": "CVE-2021-35042",
@@ -39,49 +59,69 @@
       "version": "inconnue",
       "srp_score": 8.6,
       "decision": "BLOQUER",
-      "ai_explanation": "Cette vulnérabilité permet une injection SQL via le paramètre order_by dans Django, exposant les données sensibles de la base de données. Avec un CVSS de 9.8, elle est trivialement exploitable à distance sans authentification. Bien que non listée dans le KEV, son EPSS élevé (0.909) indique une forte probabilité d'exploitation dans la nature.",
-      "ai_fix": "Mettre à jour immédiatement Django vers les versions 3.1.13 ou 3.2.5+. Valider et assainir toutes les entrées utilisateur passées à order_by.",
-      "timestamp": "2026-06-11T06:55:27.512985Z"
+      "ai_explanation": "Cette vulnérabilité SQL injection dans Django permet à des attaquants d'exécuter du code SQL arbitraire via le paramètre order_by. Les attaques peuvent mener à une exfiltration de données ou une élévation de privilèges.",
+      "ai_fix": "Mettre à jour Django vers les versions 3.1.13, 3.2.5 ou supérieures qui corrigent cette vulnérabilité. Valider/sanitizer toute entrée utilisateur avant de l'utiliser dans order_by().",
+      "timestamp": "2026-06-12T06:48:25.098751Z"
     },
     {
-      "cve_id": "CVE-2023-4863",
+      "cve_id": "CVE-2020-14343",
+      "package": "PyYAML",
+      "version": "inconnue",
+      "srp_score": 7.3,
+      "decision": "BLOQUER",
+      "ai_explanation": "PyYAML versions before 5.4 allow arbitrary code execution via crafted YAML files, making it critical for apps processing untrusted input. Threat actors like Zeppelin/Bloat-A have exploited similar vulns in document-themed attacks. This is actively targeted in supply chain attacks.",
+      "ai_fix": "Immediately upgrade PyYAML to version 5.4+ and replace full_load() with safe_load() for untrusted input. Consider using ruamel.yaml as a more secure alternative.",
+      "timestamp": "2026-06-12T06:47:30.558444Z"
+    },
+    {
+      "cve_id": "CVE-2023-50447",
       "package": "Pillow",
       "version": "inconnue",
-      "srp_score": 8.3,
-      "decision": "BLOQUER",
-      "ai_explanation": "Heap buffer overflow in libwebp allows remote code execution via crafted images. Actively exploited in wild (CISA KEV) with high EPSS score (93.3%). Critical for any system processing web images.",
-      "ai_fix": "Immediately update libwebp to 1.3.2+ and Pillow to latest version. Isolate/scan systems that processed untrusted WebP images.",
-      "timestamp": "2026-06-11T06:54:07.983618Z"
-    },
-    {
-      "cve_id": "CVE-2023-0286",
-      "package": "cryptography",
-      "version": "inconnue",
-      "srp_score": 7.6,
-      "decision": "BLOQUER",
-      "ai_explanation": "Cette vulnérabilité de type confusion dans le traitement des adresses X.400 permet à un attaquant de manipuler des certificats X.509 pour provoquer des crashes ou une exécution de code arbitraire. Bien qu'aucun acteur spécifique ne soit identifié, le score EPSS élevé (0.8833) indique une forte probabilité d'exploitation dans la nature.",
-      "ai_fix": "Mettre à jour immédiatement la bibliothèque cryptography vers une version corrigée (>=39.0.0). Vérifier que les dépendances transitives n'utilisent pas de versions vulnérables.",
-      "timestamp": "2026-06-11T06:54:39.812112Z"
-    },
-    {
-      "cve_id": "CVE-2022-22817",
-      "package": "Pillow",
-      "version": "inconnue",
-      "srp_score": 7.0,
+      "srp_score": 6.3,
       "decision": "ALERTER",
-      "ai_explanation": "Pillow avant la 9.0.0 permet l'exécution d'expressions Python arbitraires via ImageMath.eval, ce qui peut mener à une exécution de code à distance. Des acteurs comme RedHat et Ubuntu ont priorisé des correctifs pour cette vulnérabilité critique.",
-      "ai_fix": "Mettre à jour Pillow vers la version 9.0.0 ou supérieure immédiatement pour bloquer l'exécution de code arbitraire.",
-      "timestamp": "2026-06-11T06:53:42.765059Z"
+      "ai_explanation": "Pillow jusqu'à la version 10.1.0 permet une exécution de code arbitraire via le paramètre environment dans PIL.ImageMath.eval. Cette vulnérabilité diffère de CVE-2022-22817 qui concernait le paramètre expression. Le score CVSS de 8.1 indique un risque élevé d'exploitation.",
+      "ai_fix": "Mettre à jour Pillow vers une version supérieure à 10.1.0 immédiatement. Vérifier que les dépendances utilisent bien la version corrigée.",
+      "timestamp": "2026-06-12T06:46:21.590060Z"
     },
     {
-      "cve_id": "CVE-2025-57833",
+      "cve_id": "CVE-2025-64459",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 6.3,
+      "decision": "ALERTER",
+      "ai_explanation": "This Django vulnerability allows SQL injection via crafted dictionary inputs in QuerySet methods, potentially enabling data exfiltration or database manipulation. While not currently exploited in the wild (low EPSS), the high CVSS score indicates significant risk if unpatched.",
+      "ai_fix": "Immediately upgrade Django to version 5.1.14, 4.2.26, or 5.2.8 which contain the security patch. Sanitize all dictionary inputs passed to QuerySet methods as additional defense.",
+      "timestamp": "2026-06-12T06:48:52.175633Z"
+    },
+    {
+      "cve_id": "CVE-2023-23969",
       "package": "django",
       "version": "inconnue",
       "srp_score": 6.2,
       "decision": "ALERTER",
-      "ai_explanation": "This Django vulnerability allows SQL injection via crafted dictionary inputs in FilteredRelation, potentially enabling attackers to manipulate database queries. While not currently exploited in the wild (low EPSS), the high CVSS score indicates significant impact if leveraged.",
-      "ai_fix": "Immediately upgrade Django to version 4.2.24, 5.1.12, or 5.2.6 which contain the patch. Sanitize all dictionary inputs passed to annotate()/alias() methods as additional protection.",
-      "timestamp": "2026-06-11T06:57:40.442864Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet un déni de service par consommation mémoire excessive via des en-têtes Accept-Language malveillants. Bien que non listée dans le KEV, elle est exploitée dans la nature par des acteurs comme Oracle Solaris.",
+      "ai_fix": "Mettre à jour Django vers les versions 3.2.17, 4.0.9 ou 4.1.6 qui corrigent ce problème de cache mémoire.",
+      "timestamp": "2026-06-12T06:49:35.066019Z"
+    },
+    {
+      "cve_id": "CVE-2023-50782",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 6.0,
+      "decision": "ALERTER",
+      "ai_explanation": "This vulnerability in python-cryptography allows attackers to decrypt TLS communications using RSA key exchanges, potentially exposing sensitive data. While the EPSS score suggests low immediate threat, the impact is severe if exploited. The flaw primarily affects systems using outdated RSA key exchange mechanisms.",
+      "ai_fix": "Upgrade to a patched version of python-cryptography immediately. Consider migrating to ECDHE key exchanges which aren't vulnerable to this attack.",
+      "timestamp": "2026-06-12T06:47:41.122564Z"
+    },
+    {
+      "cve_id": "CVE-2024-26130",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 6.0,
+      "decision": "ALERTER",
+      "ai_explanation": "This vulnerability in the cryptography package allows serializing mismatched certificate-key pairs, potentially enabling man-in-the-middle attacks or spoofing. While not currently exploited in the wild (low EPSS), the high CVSS score indicates significant impact if leveraged. The mismatch could be abused to create fraudulent PKCS12 bundles.",
+      "ai_fix": "Upgrade cryptography to version 42.0.4 or later immediately. Verify all certificate-key pairs for consistency before serialization.",
+      "timestamp": "2026-06-12T06:47:47.305872Z"
     },
     {
       "cve_id": "CVE-2025-64458",
@@ -89,9 +129,9 @@
       "version": "inconnue",
       "srp_score": 6.0,
       "decision": "ALERTER",
-      "ai_explanation": "This Django vulnerability allows attackers to perform DoS attacks via slow NFKC normalization on Windows, impacting redirect handlers. While not actively exploited (low EPSS), it could disrupt services. The SQL injection risk in _connector parameter adds secondary attack surface.",
-      "ai_fix": "Upgrade Django to patched versions: 5.1.14, 4.2.26, or 5.2.8 immediately. For the _connector parameter, implement strict input validation and parameterized queries.",
-      "timestamp": "2026-06-11T06:57:45.909874Z"
+      "ai_explanation": "This Django vulnerability exposes Windows servers to potential DoS attacks via slow NFKC normalization in redirect handlers. While not actively exploited (low EPSS), attackers could leverage this to degrade server performance.",
+      "ai_fix": "Upgrade Django to patched versions: 5.1.14, 4.2.26, or 5.2.8 immediately to mitigate the NFKC normalization performance issue.",
+      "timestamp": "2026-06-12T06:50:12.575159Z"
     },
     {
       "cve_id": "CVE-2023-30861",
@@ -99,19 +139,9 @@
       "version": "inconnue",
       "srp_score": 6.0,
       "decision": "ALERTER",
-      "ai_explanation": "Flask peut exposer des données sensibles d'un client à d'autres via un cache proxy mal configuré, incluant potentiellement des cookies de session. Des acteurs comme Oracle ont classé cette vulnérabilité comme critique dans leurs bulletins. Le risque est accru dans les environnements partagés avec reverse proxy.",
-      "ai_fix": "Mettre à jour Flask vers une version corrigée et configurer les en-têtes 'Cache-Control' pour éviter le caching des réponses sensibles. Désactiver le caching des headers 'Set-Cookie' au niveau du proxy.",
-      "timestamp": "2026-06-11T06:58:42.118182Z"
-    },
-    {
-      "cve_id": "CVE-2021-32052",
-      "package": "django",
-      "version": "inconnue",
-      "srp_score": 5.5,
-      "decision": "ALERTER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet l'injection d'en-têtes HTTP via des URL contenant des nouvelles lignes ou tabulations. Bien que le score SRP soit modéré (5.5/10), elle pourrait être exploitée pour des attaques de type response splitting.",
-      "ai_fix": "Mettre à jour Django vers les versions 2.2.22, 3.1.10 ou 3.2.2 qui corrigent cette faille. Vérifier également que toutes les entrées utilisateur passant par URLValidator sont correctement sanitizées.",
-      "timestamp": "2026-06-11T06:57:52.227889Z"
+      "ai_explanation": "Cette vulnérabilité dans Flask permet à des proxies intermédiaires de cacher et renvoyer des réponses (y compris des cookies de session) à d'autres clients, exposant ainsi des données sensibles. Des acteurs comme Oracle ont émis des alertes critiques à ce sujet.",
+      "ai_fix": "Mettre à jour Flask vers une version corrigée et configurer les proxies pour ne pas cacher les en-têtes 'Set-Cookie'. Utiliser 'Cache-Control: private' pour les réponses sensibles.",
+      "timestamp": "2026-06-12T06:51:11.165948Z"
     },
     {
       "cve_id": "CVE-2022-22818",
@@ -119,9 +149,9 @@
       "version": "inconnue",
       "srp_score": 5.5,
       "decision": "ALERTER",
-      "ai_explanation": "This Django vulnerability allows XSS attacks via the {% debug %} template tag by not properly encoding context data. Attackers could exploit this to execute malicious scripts in users' browsers. While not in CISA KEV, the moderate CVSS score indicates significant risk for exposed applications.",
-      "ai_fix": "Upgrade Django to version 2.2.27, 3.2.12, or 4.0.2 immediately. Alternatively, remove or restrict access to the {% debug %} tag in production environments.",
-      "timestamp": "2026-06-11T06:58:13.427529Z"
+      "ai_explanation": "La balise {% debug %} dans Django expose le contexte actuel sans encodage approprié, permettant à un attaquant d'injecter du code malveillant via XSS. Bien que le score EPSS soit bas, cette vulnérabilité est exploitable si l'application expose cette fonctionnalité en production.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.27, 3.2.12 ou 4.0.2 qui corrigent cette vulnérabilité. Désactiver la balise {% debug %} en production si elle n'est pas nécessaire.",
+      "timestamp": "2026-06-12T06:50:42.834916Z"
     },
     {
       "cve_id": "CVE-2024-28219",
@@ -129,19 +159,49 @@
       "version": "inconnue",
       "srp_score": 5.4,
       "decision": "ALERTER",
-      "ai_explanation": "Cette vulnérabilité de dépassement de buffer dans Pillow permet une corruption mémoire via strcpy non sécurisé. Bien que le score EPSS soit bas, des attaquants pourraient exploiter ceci pour exécuter du code arbitraire ou provoquer des crashes.",
-      "ai_fix": "Mettre à jour Pillow vers la version 10.3.0 ou supérieure qui remplace strcpy par strncpy pour une copie sécurisée des chaînes.",
-      "timestamp": "2026-06-11T06:54:13.393366Z"
+      "ai_explanation": "Pillow avant la version 10.3.0 contient un dépassement de buffer dans _imagingcms.c dû à l'utilisation de strcpy au lieu de strncpy. Bien que le score EPSS soit bas, des acteurs comme Oracle ont identifié ce risque dans leurs bulletins critiques.",
+      "ai_fix": "Mettre à jour Pillow vers la version 10.3.0 ou ultérieure pour remplacer strcpy par strncpy et prévenir les dépassements de buffer.",
+      "timestamp": "2026-06-12T06:47:04.070250Z"
     },
     {
-      "cve_id": "CVE-2020-14343",
-      "package": "PyYAML",
+      "cve_id": "CVE-2026-42310",
+      "package": "Pillow",
       "version": "inconnue",
-      "srp_score": 4.3,
+      "srp_score": 5.2,
       "decision": "ALERTER",
-      "ai_explanation": "PyYAML versions before 5.4 allow arbitrary code execution when processing malicious YAML files via full_load/FullLoader. This is critical (CVSS 9.8) as attackers could gain remote code execution by submitting crafted YAML.",
-      "ai_fix": "Immediately upgrade PyYAML to version 5.4 or later. Replace full_load() with safe_load() for untrusted input.",
-      "timestamp": "2026-06-11T06:54:32.777872Z"
+      "ai_explanation": "Cette vulnérabilité dans Pillow permet un DoS via un PDF malveillant, bloquant l'application. Bien que peu probable (EPSS 0.0001), plusieurs acteurs de menace l'ont référencée.",
+      "ai_fix": "Mettre à jour Pillow vers la version 12.2.0 ou supérieure pour corriger cette vulnérabilité.",
+      "timestamp": "2026-06-12T06:47:19.786242Z"
+    },
+    {
+      "cve_id": "CVE-2024-0727",
+      "package": "cryptography",
+      "version": "inconnue",
+      "srp_score": 5.2,
+      "decision": "ALERTER",
+      "ai_explanation": "Cette vulnérabilité dans OpenSSL permet un DoS via un fichier PKCS12 malveillant. Bien que rarement exploitée (EPSS 0.002%), elle concerne les systèmes traitant des fichiers PKCS12 non fiables. Oracle l'a classée comme critique dans son advisory de juillet 2024.",
+      "ai_fix": "Mettre à jour OpenSSL vers la version corrigée. Valider l'intégrité des fichiers PKCS12 avant traitement.",
+      "timestamp": "2026-06-12T06:48:10.618034Z"
+    },
+    {
+      "cve_id": "CVE-2024-35195",
+      "package": "requests",
+      "version": "inconnue",
+      "srp_score": 5.2,
+      "decision": "ALERTER",
+      "ai_explanation": "Cette vulnérabilité dans la bibliothèque Requests permet à un attaquant de maintenir une session avec vérification SSL désactivée même après un changement de configuration, exposant aux attaques MITM. Bien que le score EPSS soit faible, des acteurs comme Oracle et RedHat l'ont jugée critique.",
+      "ai_fix": "Mettre à jour la bibliothèque Requests vers la version 2.32.0 ou supérieure pour corriger le comportement de vérification des certificats.",
+      "timestamp": "2026-06-12T06:51:22.984742Z"
+    },
+    {
+      "cve_id": "CVE-2024-47081",
+      "package": "requests",
+      "version": "inconnue",
+      "srp_score": 5.1,
+      "decision": "ALERTER",
+      "ai_explanation": "Cette vulnérabilité dans la bibliothèque Requests permet une fuite des identifiants .netrc via des URLs malveillantes. Bien que le score EPSS soit bas, l'exposition des credentials représente un risque significatif pour la sécurité des systèmes.",
+      "ai_fix": "Mettre à jour la bibliothèque Requests vers la version 2.32.4 ou supérieure. En alternative, désactiver l'utilisation du fichier .netrc dans les anciennes versions.",
+      "timestamp": "2026-06-12T06:51:28.347593Z"
     },
     {
       "cve_id": "CVE-2017-18342",
@@ -149,9 +209,19 @@
       "version": "inconnue",
       "srp_score": 4.1,
       "decision": "ALERTER",
-      "ai_explanation": "PyYAML's yaml.load() before v5.1 allows arbitrary code execution when processing untrusted YAML files, making it critical for applications accepting external YAML input. While no specific threat actors target this currently, the high CVSS score reflects severe remote exploitation potential.",
-      "ai_fix": "Upgrade to PyYAML ≥5.1 and replace yaml.load() with yaml.safe_load() for untrusted data. For legacy needs, explicitly use yaml.load(..., Loader=yaml.UnsafeLoader) with extreme caution.",
-      "timestamp": "2026-06-11T06:54:28.221359Z"
+      "ai_explanation": "PyYAML's yaml.load() before v5.1 allows arbitrary code execution when processing untrusted YAML files, making it critical for applications accepting external YAML input. While no specific threat actors target this currently, the high CVSS score reflects severe remote code execution risk.",
+      "ai_fix": "Immediately upgrade to PyYAML ≥5.1 and replace all yaml.load() calls with yaml.safe_load() or explicitly use yaml.load(..., Loader=yaml.SafeLoader) for untrusted data.",
+      "timestamp": "2026-06-12T06:47:25.392840Z"
+    },
+    {
+      "cve_id": "CVE-2022-22817",
+      "package": "Pillow",
+      "version": "inconnue",
+      "srp_score": 4.0,
+      "decision": "ALERTER",
+      "ai_explanation": "Cette vulnérabilité dans Pillow permet l'exécution de code arbitraire via PIL.ImageMath.eval, exposant les systèmes à des attaques RCE. Bien que le score EPSS soit bas, le CVSS critique (9.8) indique un risque élevé si exploité.",
+      "ai_fix": "Mettre à jour Pillow vers la version 9.0.0 ou ultérieure pour corriger cette vulnérabilité d'évaluation d'expressions.",
+      "timestamp": "2026-06-12T06:46:13.483177Z"
     },
     {
       "cve_id": "CVE-2022-28346",
@@ -159,9 +229,9 @@
       "version": "inconnue",
       "srp_score": 4.0,
       "decision": "ALERTER",
-      "ai_explanation": "Cette vulnérabilité SQLi dans Django permet une injection via des alias de colonnes malveillants dans certaines méthodes QuerySet. Bien que le score EPSS soit bas, le CVSS critique (9.8) indique un risque élevé si exploité.",
-      "ai_fix": "Mettre à jour Django vers les versions 2.2.28, 3.2.13, 4.0.4 ou supérieures pour corriger cette vulnérabilité.",
-      "timestamp": "2026-06-11T06:55:32.819505Z"
+      "ai_explanation": "Cette vulnérabilité SQLi dans Django permet une injection via des alias de colonnes malveillants dans les méthodes QuerySet. Bien que le score EPSS soit bas, le CVSS critique indique un risque élevé si exploité.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.28, 3.2.13 ou 4.0.4 qui corrigent cette vulnérabilité. Valider/sanitizer tous les kwargs passés à ces méthodes.",
+      "timestamp": "2026-06-12T06:48:30.569000Z"
     },
     {
       "cve_id": "CVE-2022-28347",
@@ -169,9 +239,9 @@
       "version": "inconnue",
       "srp_score": 3.9,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet une injection SQL via QuerySet.explain() en manipulant les options passées sous forme de dictionnaire. Bien que le score CVSS soit élevé, l'exploitation nécessite des conditions spécifiques et aucun acteur de menace connu ne la cible actuellement.",
-      "ai_fix": "Mettre à jour Django vers les versions 2.2.28, 3.2.13 ou 4.0.4 qui corrigent cette vulnérabilité.",
-      "timestamp": "2026-06-11T06:55:38.520253Z"
+      "ai_explanation": "Cette vulnérabilité SQLi dans Django permet une exécution de code arbitraire via des requêtes EXPLAIN malveillantes. Bien que le score EPSS soit bas, le CVSS critique justifie une attention immédiate.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.28, 3.2.13 ou 4.0.4 qui corrigent cette faille. Valider strictement les entrées utilisateur passées à QuerySet.explain().",
+      "timestamp": "2026-06-12T06:48:36.559413Z"
     },
     {
       "cve_id": "CVE-2023-31047",
@@ -179,9 +249,9 @@
       "version": "inconnue",
       "srp_score": 3.9,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet de contourner la validation des fichiers lors de l'upload multiple via un seul champ de formulaire, exposant potentiellement à des fichiers malveillants. Bien que le risque soit modéré (SRP 3.9), l'impact pourrait être élevé si combiné avec d'autres failles.",
-      "ai_fix": "Mettre à jour Django vers les versions 3.2.19, 4.1.9 ou 4.2.1 qui corrigent ce comportement. Implémenter une validation côté serveur supplémentaire pour les uploads multiples si nécessaire.",
-      "timestamp": "2026-06-11T06:55:57.414226Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet de contourner la validation des fichiers lors d'upload multiples, ce qui pourrait permettre à un attaquant d'injecter des fichiers malveillants malgré les contrôles de sécurité.",
+      "ai_fix": "Mettre à jour Django vers les versions 3.2.19, 4.1.9 ou 4.2.1 qui corrigent ce comportement de validation.",
+      "timestamp": "2026-06-12T06:48:46.719219Z"
     },
     {
       "cve_id": "CVE-2022-24303",
@@ -189,9 +259,9 @@
       "version": "inconnue",
       "srp_score": 3.7,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Pillow permet à des attaquants de supprimer des fichiers arbitraires via une mauvaise gestion des espaces dans les noms de chemins temporaires. Bien que le score CVSS soit élevé, le faible score SRP et EPSS indique une exploitation peu probable en pratique.",
-      "ai_fix": "Mettre à jour Pillow vers la version 9.0.1 ou ultérieure pour corriger la gestion des chemins temporaires.",
-      "timestamp": "2026-06-11T06:53:52.756573Z"
+      "ai_explanation": "Pillow avant la version 9.0.1 présente une vulnérabilité permettant à des attaquants de supprimer des fichiers en raison d'une mauvaise gestion des espaces dans les noms de chemins temporaires. Le score CVSS élevé (9.1) indique un impact potentiellement important bien que la probabilité d'exploitation soit modérée (SRP 3.7/10). Aucun acteur de menace spécifique n'est identifié actuellement.",
+      "ai_fix": "Mettre à jour Pillow vers la version 9.0.1 ou ultérieure immédiatement. Vérifier les fichiers temporaires critiques après mise à jour.",
+      "timestamp": "2026-06-12T06:46:29.739007Z"
     },
     {
       "cve_id": "CVE-2022-36359",
@@ -199,9 +269,9 @@
       "version": "inconnue",
       "srp_score": 3.6,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet une attaque RFD (Reflected File Download) où un attaquant peut forcer le téléchargement d'un fichier malveillant en manipulant l'entête Content-Disposition. Bien que le score SRP soit modéré (3.6/10), le CVSS élevé (8.8) indique un impact potentiellement sévère si exploité.",
-      "ai_fix": "Mettre à jour Django vers la version 3.2.15 ou 4.0.7 pour corriger cette vulnérabilité. Ne jamais utiliser d'entrée utilisateur non désinfectée pour générer des noms de fichiers dans FileResponse.",
-      "timestamp": "2026-06-11T06:56:47.626562Z"
+      "ai_explanation": "This RFD vulnerability in Django allows attackers to manipulate file downloads by injecting malicious filenames, potentially leading to client-side code execution. While no specific threat actors are known, the attack requires user interaction but has high impact potential.",
+      "ai_fix": "Upgrade Django to version 3.2.15, 4.0.7 or later to sanitize filename inputs in FileResponse. Validate all user-supplied filenames server-side before processing.",
+      "timestamp": "2026-06-12T06:49:24.067695Z"
     },
     {
       "cve_id": "CVE-2023-24580",
@@ -209,9 +279,9 @@
       "version": "inconnue",
       "srp_score": 3.6,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet un déni de service via l'épuisement des ressources (fichiers/mémoire) en soumettant des requêtes multipart malveillantes avec un nombre excessif de parties. Bien que le score SRP soit modéré (3.6/10), le CVSS de 7.5 indique un impact potentiellement élevé.",
-      "ai_fix": "Mettre à jour Django vers les versions 3.2.18, 4.0.10 ou 4.1.7 qui corrigent ce problème. Implémenter des limites de taille/taux pour les requêtes multipart en amont (ex: Nginx).",
-      "timestamp": "2026-06-11T06:57:14.151422Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet un déni de service via l'analyse de requêtes multipart malveillantes, pouvant épuiser les ressources système. Bien que le score SRP soit modéré, l'absence d'acteurs connus réduit le risque immédiat.",
+      "ai_fix": "Mettre à jour Django vers les versions 3.2.18, 4.0.10 ou 4.1.7 qui corrigent cette vulnérabilité.",
+      "timestamp": "2026-06-12T06:49:40.472001Z"
     },
     {
       "cve_id": "CVE-2022-41323",
@@ -219,29 +289,9 @@
       "version": "inconnue",
       "srp_score": 3.5,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet une attaque par déni de service via des expressions régulières malveillantes dans les URLs internationalisées. Bien que le score SRP soit modéré (3.5/10), le CVSS élevé (7.5) indique un impact potentiellement important.",
+      "ai_explanation": "Cette vulnérabilité dans Django permet une attaque par déni de service via des expressions régulières malveillantes dans les paramètres de localisation. Bien que le score SRP soit modéré (3.5/10), le CVSS élevé (7.5) indique un impact potentiellement important.",
       "ai_fix": "Mettre à jour Django vers les versions 3.2.16, 4.0.8 ou 4.1.2 qui corrigent cette vulnérabilité.",
-      "timestamp": "2026-06-11T06:56:56.825031Z"
-    },
-    {
-      "cve_id": "CVE-2023-50447",
-      "package": "Pillow",
-      "version": "inconnue",
-      "srp_score": 3.3,
-      "decision": "PASSER",
-      "ai_explanation": "Pillow's ImageMath.eval function allows arbitrary code execution via environment parameter manipulation. While no active exploitation is reported, the high CVSS indicates critical impact potential if chained with other vulnerabilities.",
-      "ai_fix": "Upgrade Pillow to version 10.1.1 or later which patches this vulnerability. Avoid passing untrusted input to ImageMath.eval's environment parameter.",
-      "timestamp": "2026-06-11T06:53:47.362976Z"
-    },
-    {
-      "cve_id": "CVE-2025-64459",
-      "package": "django",
-      "version": "inconnue",
-      "srp_score": 3.3,
-      "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet des injections SQL via des dictionnaires malveillants dans certaines méthodes QuerySet. Bien que le score CVSS soit élevé, l'exploitation est complexe et nécessite des conditions spécifiques.",
-      "ai_fix": "Mettre à jour Django vers les versions 5.1.14, 4.2.26 ou 5.2.8 qui corrigent cette vulnérabilité. Éviter d'utiliser des entrées utilisateur non validées dans les méthodes QuerySet concernées.",
-      "timestamp": "2026-06-11T06:56:07.268330Z"
+      "timestamp": "2026-06-12T06:49:29.816083Z"
     },
     {
       "cve_id": "CVE-2023-36053",
@@ -249,19 +299,19 @@
       "version": "inconnue",
       "srp_score": 3.3,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django expose à des attaques ReDoS via des emails/URLs malveillants avec un nombre excessif de labels de domaine, pouvant surcharger le serveur.",
+      "ai_explanation": "Cette vulnérabilité dans Django expose à des attaques ReDoS via des emails/URLs malveillants contenant un nombre anormal de sous-domaines, pouvant surcharger le serveur. Le risque est modéré (SRP 3.3) car nécessite une entrée spécifique.",
       "ai_fix": "Mettre à jour Django vers les versions 3.2.20, 4.1.10 ou 4.2.3 qui corrigent cette vulnérabilité.",
-      "timestamp": "2026-06-11T06:57:18.992588Z"
+      "timestamp": "2026-06-12T06:49:46.399312Z"
     },
     {
-      "cve_id": "CVE-2023-23969",
+      "cve_id": "CVE-2025-57833",
       "package": "django",
       "version": "inconnue",
       "srp_score": 3.2,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet un déni de service par consommation mémoire excessive via des en-têtes Accept-Language malveillants. Bien que le score SRP soit modéré (3.2/10), l'impact potentiel reste significatif (CVSS 7.5). Aucun acteur de menace spécifique n'est identifié, mais l'exploitation est techniquement simple.",
-      "ai_fix": "Mettre à jour Django vers les versions 3.2.17, 4.0.9 ou 4.1.6 qui corrigent ce problème. Limiter la taille des en-têtes Accept-Language peut aussi atténuer le risque.",
-      "timestamp": "2026-06-11T06:57:06.971844Z"
+      "ai_explanation": "Cette vulnérabilité SQLi dans Django permet une injection via des alias de colonnes malveillants dans FilteredRelation. Bien que le score EPSS soit bas, le CVSS élevé indique un impact potentiellement sévère si exploité.",
+      "ai_fix": "Mettre à jour Django vers les versions 4.2.24, 5.1.12 ou 5.2.6 qui corrigent cette vulnérabilité. Valider strictement les entrées utilisateur passées à annotate()/alias().",
+      "timestamp": "2026-06-12T06:50:07.903398Z"
     },
     {
       "cve_id": "CVE-2021-31542",
@@ -269,9 +319,9 @@
       "version": "inconnue",
       "srp_score": 3.1,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet un directory traversal via des noms de fichiers malveillants, exposant potentiellement des fichiers sensibles du serveur. Le score SRP modéré (3.1/10) indique un risque limité mais réel.",
-      "ai_fix": "Mettre à jour Django vers les versions 2.2.21, 3.1.9 ou 3.2.1 pour corriger cette faille. Valider strictement les noms de fichiers uploadés en complément.",
-      "timestamp": "2026-06-11T06:56:15.287552Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet un directory traversal via des noms de fichiers malveillants, exposant potentiellement des fichiers sensibles du serveur. Bien que le score SRP soit modéré, l'impact est important si exploité.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.21, 3.1.9 ou 3.2.1 qui corrigent cette vulnérabilité.",
+      "timestamp": "2026-06-12T06:48:57.167114Z"
     },
     {
       "cve_id": "CVE-2023-43665",
@@ -279,9 +329,9 @@
       "version": "inconnue",
       "srp_score": 3.1,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet un DoS via des entrées HTML malformées dans Truncator. Le risque est modéré (SRP 3.1) car nécessite des conditions spécifiques. Aucun acteur de menace connu ne l'exploite actuellement.",
-      "ai_fix": "Mettre à jour Django vers les versions 3.2.22, 4.1.12 ou 4.2.6 qui corrigent ce problème. Vérifier les entrées utilisateur passant à Truncator.",
-      "timestamp": "2026-06-11T06:57:25.051560Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet un DoS via des entrées HTML malveillantes trop longues dans Truncator. Le risque est modéré (SRP 3.1) car nécessite des conditions spécifiques.",
+      "ai_fix": "Mettre à jour Django vers les versions 3.2.22, 4.1.12 ou 4.2.6 qui corrigent ce problème.",
+      "timestamp": "2026-06-12T06:49:51.412358Z"
     },
     {
       "cve_id": "CVE-2023-46695",
@@ -289,9 +339,9 @@
       "version": "inconnue",
       "srp_score": 3.1,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet une attaque DoS via des entrées malveillantes exploitant la lenteur de la normalisation NFKC sous Windows. Bien que le score SRP soit modéré (3.1/10), elle pourrait être exploitée pour rendre un service indisponible.",
-      "ai_fix": "Mettre à jour Django vers les versions 3.2.23, 4.1.13 ou 4.2.7 qui corrigent ce problème de performance.",
-      "timestamp": "2026-06-11T06:57:30.496946Z"
+      "ai_explanation": "This vulnerability in Django's username field allows attackers to trigger slow NFKC normalization on Windows, potentially causing DoS. While no specific threat actors are known, the moderate CVSS score indicates a credible risk for Windows-hosted Django applications.",
+      "ai_fix": "Upgrade Django to version 3.2.23, 4.1.13, or 4.2.7 which contain the performance fix for NFKC normalization on Windows.",
+      "timestamp": "2026-06-12T06:49:57.200824Z"
     },
     {
       "cve_id": "CVE-2024-27351",
@@ -299,9 +349,9 @@
       "version": "inconnue",
       "srp_score": 3.1,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet une attaque par déni de service via une expression régulière malveillante dans Truncator.words(). Le risque est modéré (SRP 3.1) car nécessitant une entrée spécifique.",
-      "ai_fix": "Mettre à jour Django vers les versions 3.2.25, 4.2.11 ou 5.0.3 qui corrigent cette vulnérabilité.",
-      "timestamp": "2026-06-11T06:58:23.622421Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet une attaque par déni de service via une expression régulière malveillante dans les fonctions de troncature HTML. Bien que le score SRP soit modéré (3.1/10), elle pourrait être exploitée pour perturber des services web.",
+      "ai_fix": "Mettre à jour Django vers les versions 3.2.25, 4.2.11 ou 5.0.3 qui contiennent le correctif. Vérifier également l'utilisation des fonctions truncatewords_html dans le code.",
+      "timestamp": "2026-06-12T06:50:55.791589Z"
     },
     {
       "cve_id": "CVE-2022-45198",
@@ -309,9 +359,9 @@
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Pillow permet des attaques par déni de service via des GIFs spécialement conçus qui provoquent une consommation excessive de mémoire (attaque par amplification de données). Bien que le score SRP soit modéré (3.0/10), le CVSS de 7.5 indique un impact potentiellement important.",
+      "ai_explanation": "Cette vulnérabilité dans Pillow permet une attaque par déni de service via des GIFs spécialement conçus qui provoquent une consommation excessive de mémoire. Bien que le score SRP soit modéré (3.0/10), le CVSS élevé (7.5) indique un impact potentiellement important.",
       "ai_fix": "Mettre à jour Pillow vers la version 9.2.0 ou ultérieure pour corriger la gestion des GIFs compressés.",
-      "timestamp": "2026-06-11T06:53:58.474887Z"
+      "timestamp": "2026-06-12T06:46:35.158143Z"
     },
     {
       "cve_id": "CVE-2023-44271",
@@ -319,29 +369,9 @@
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Pillow permet un DoS via allocation mémoire excessive lors du traitement de polices TrueType. Bien que le score SRP soit bas (3.0), un attaquant pourrait crasher le service en exploitant cette faille.",
-      "ai_fix": "Mettre à jour Pillow vers la version 10.0.0 ou supérieure pour corriger la gestion mémoire dans ImageFont.",
-      "timestamp": "2026-06-11T06:54:03.344547Z"
-    },
-    {
-      "cve_id": "CVE-2023-50782",
-      "package": "cryptography",
-      "version": "inconnue",
-      "srp_score": 3.0,
-      "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans python-cryptography permet à un attaquant d'intercepter et déchiffrer des communications TLS utilisant des échanges de clés RSA, compromettant potentiellement des données sensibles. Le risque est modéré (SRP 3.0) car RSA est moins courant que les échanges ECDHE modernes.",
-      "ai_fix": "Mettre à jour le package cryptography vers la dernière version et privilégier les suites cryptographiques utilisant ECDHE plutôt que RSA pour les échanges de clés TLS.",
-      "timestamp": "2026-06-11T06:54:47.487163Z"
-    },
-    {
-      "cve_id": "CVE-2024-26130",
-      "package": "cryptography",
-      "version": "inconnue",
-      "srp_score": 3.0,
-      "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans le module cryptography permet une sérialisation incorrecte de paires clé/certificat non correspondantes, ce qui pourrait conduire à des certificats frauduleux. Le risque est modéré (SRP 3.0) car l'exploitation nécessite des conditions spécifiques.",
-      "ai_fix": "Mettre à jour cryptography vers la version 42.0.4 ou supérieure pour corriger la validation des paires clé/certificat.",
-      "timestamp": "2026-06-11T06:54:52.978172Z"
+      "ai_explanation": "Pillow avant la version 10.0.0 présente une vulnérabilité de déni de service via une allocation mémoire incontrôlée lors du traitement de polices TrueType. Un attaquant pourrait provoquer un crash du service en épuisant la mémoire disponible.",
+      "ai_fix": "Mettre à jour Pillow vers la version 10.0.0 ou ultérieure pour corriger cette vulnérabilité. Limiter l'accès aux fonctionnalités de traitement de polices si la mise à jour n'est pas immédiatement possible.",
+      "timestamp": "2026-06-12T06:46:42.246829Z"
     },
     {
       "cve_id": "CVE-2023-49083",
@@ -349,9 +379,9 @@
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans cryptography peut causer un crash de l'application via une déréférence NULL lors du traitement de certificats PKCS7 malformés, permettant un déni de service. Le risque est modéré (SRP 3.0) car nécessite un contrôle limité sur l'input.",
-      "ai_fix": "Mettre à jour le package cryptography vers une version corrigée qui gère proprement les cas NULL dans les fonctions PKCS7.",
-      "timestamp": "2026-06-11T06:55:07.544435Z"
+      "ai_explanation": "Cette vulnérabilité dans le package cryptography permet un déréférencement de pointeur NULL lors du chargement de certificats PKCS7, pouvant causer un crash de l'application (DoS). Bien que le score SRP soit modéré (3.0/10), le CVSS élevé (7.5) indique un impact potentiellement sévère.",
+      "ai_fix": "Mettre à jour le package cryptography vers une version corrigée qui gère correctement les pointeurs NULL dans les fonctions load_pem_pkcs7_certificates et load_der_pkcs7_certificates.",
+      "timestamp": "2026-06-12T06:48:05.457986Z"
     },
     {
       "cve_id": "CVE-2021-33571",
@@ -359,9 +389,9 @@
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "La vulnérabilité permet un contournement des contrôles d'accès basés sur IP en exploitant des adresses IP avec des zéros non significatifs (notation octale). Bien que le score SRP soit faible, cette faille pourrait être utilisée pour bypasser des restrictions réseau.",
-      "ai_fix": "Mettre à jour Django vers les versions 2.2.24, 3.1.12 ou 3.2.4 qui corrigent cette vulnérabilité.",
-      "timestamp": "2026-06-11T06:56:22.337156Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet un contournement des contrôles d'accès basés sur IP en exploitant des adresses IPv4 avec des zéros non significatifs. Bien que le score SRP soit modéré (3.0/10), cela pourrait être utilisé pour bypasser des restrictions réseau.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.24, 3.1.12 ou 3.2.4 qui corrigent cette faille en interdisant les zéros non significatifs dans les adresses IP.",
+      "timestamp": "2026-06-12T06:49:03.440472Z"
     },
     {
       "cve_id": "CVE-2021-45115",
@@ -369,9 +399,9 @@
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet une attaque par déni de service via des mots de passe anormalement longs, exploitant une inefficacité algorithmique dans UserAttributeSimilarityValidator.",
-      "ai_fix": "Mettre à jour Django vers les versions 2.2.26, 3.2.11 ou 4.0.1 qui corrigent cette vulnérabilité.",
-      "timestamp": "2026-06-11T06:56:26.919552Z"
+      "ai_explanation": "This vulnerability in Django allows potential DoS attacks via password validation overhead. Attackers could submit extremely large passwords to exhaust server resources, though exploitation requires user registration access.",
+      "ai_fix": "Upgrade Django to version 2.2.26, 3.2.11, or 4.0.1 which include proper input size validation for password checks.",
+      "timestamp": "2026-06-12T06:49:07.874889Z"
     },
     {
       "cve_id": "CVE-2021-45116",
@@ -379,9 +409,9 @@
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "La vulnérabilité dans le filtre dictsort de Django permet une fuite d'information ou l'exécution non intentionnelle de méthodes via des templates malveillants. Le risque est modéré (SRP 3.0) car nécessite un accès préalable au système de templates.",
+      "ai_explanation": "La vulnérabilité dans le filtre dictsort de Django permet une divulgation d'information ou l'exécution non intentionnelle de méthodes via des templates malveillants. Bien que le risque soit modéré (SRP 3.0), cette faille pourrait être exploitée pour accéder à des données sensibles.",
       "ai_fix": "Mettre à jour Django vers les versions 2.2.26, 3.2.11 ou 4.0.1 qui corrigent cette vulnérabilité.",
-      "timestamp": "2026-06-11T06:56:32.393426Z"
+      "timestamp": "2026-06-12T06:49:13.620358Z"
     },
     {
       "cve_id": "CVE-2022-23833",
@@ -389,9 +419,9 @@
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet un déni de service via une boucle infinie lors du parsing de fichiers multipart malveillants. Bien que le score SRP soit modéré (3.0/10), l'impact potentiel est significatif (CVSS 7.5). Aucun acteur de menace spécifique n'est identifié actuellement.",
-      "ai_fix": "Mettre à jour Django vers les versions 2.2.27, 3.2.12 ou 4.0.2 selon la branche utilisée.",
-      "timestamp": "2026-06-11T06:56:38.264313Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet un déni de service via une boucle infinie lors du parsing de fichiers multipart malveillants. Bien que le score SRP soit modéré (3.0/10), l'impact potentiel est significatif avec un CVSS de 7.5.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.27, 3.2.12 ou 4.0.2 qui corrigent cette vulnérabilité.",
+      "timestamp": "2026-06-12T06:49:19.063224Z"
     },
     {
       "cve_id": "CVE-2024-24680",
@@ -399,9 +429,9 @@
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "The intcomma filter in Django can be abused with extremely long strings to cause CPU exhaustion, leading to denial-of-service. While no active exploitation is reported, the CVSS score indicates significant impact potential.",
-      "ai_fix": "Upgrade Django to patched versions: 3.2.24, 4.2.10, or 5.0.2 immediately to mitigate this DoS vector.",
-      "timestamp": "2026-06-11T06:57:35.076099Z"
+      "ai_explanation": "The intcomma filter vulnerability in Django allows attackers to trigger a DoS by processing extremely long strings, potentially crashing the application. While no specific threat actors are known, the moderate CVSS score indicates a credible risk for unpatched systems.",
+      "ai_fix": "Upgrade Django to version 3.2.24, 4.2.10, or 5.0.2 immediately to patch this vulnerability.",
+      "timestamp": "2026-06-12T06:50:02.002493Z"
     },
     {
       "cve_id": "CVE-2023-41164",
@@ -409,9 +439,9 @@
       "version": "inconnue",
       "srp_score": 3.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet un DoS via des chaînes Unicode malveillantes, exploitant une inefficacité dans le parsing. Bien que le risque soit modéré (SRP 3.0), elle pourrait perturber des services non patchés.",
-      "ai_fix": "Mettre à jour Django vers les versions 3.2.21, 4.1.11 ou 4.2.5 qui corrigent cette faille.",
-      "timestamp": "2026-06-11T06:58:18.622617Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet un DoS via des requêtes contenant un nombre excessif de caractères Unicode, exploitant une inefficacité dans le traitement des URI. Bien que le risque soit modéré (SRP 3.0), elle pourrait être utilisée pour perturber temporairement un service.",
+      "ai_fix": "Mettre à jour Django vers les versions 3.2.21, 4.1.11 ou 4.2.5 qui corrigent cette vulnérabilité.",
+      "timestamp": "2026-06-12T06:50:49.814982Z"
     },
     {
       "cve_id": "CVE-2021-44420",
@@ -419,9 +449,9 @@
       "version": "inconnue",
       "srp_score": 2.9,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans Django permet de contourner les contrôles d'accès en ajoutant des nouvelles lignes dans les URLs. Bien que le risque soit modéré (SRP 2.9), cela pourrait être exploité pour accéder à des ressources protégées.",
-      "ai_fix": "Mettre à jour Django vers les versions 2.2.25, 3.1.14 ou 3.2.10 qui corrigent ce comportement.",
-      "timestamp": "2026-06-11T06:58:02.376652Z"
+      "ai_explanation": "Cette vulnérabilité dans Django permet de contourner les contrôles d'accès en ajoutant des nouvelles lignes aux URLs. Bien que le risque soit modéré (SRP 2.9), elle pourrait être exploitée pour accéder à des ressources protégées.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.25, 3.1.14 ou 3.2.10 ou supérieures pour corriger ce comportement.",
+      "timestamp": "2026-06-12T06:50:30.362364Z"
     },
     {
       "cve_id": "CVE-2026-26007",
@@ -429,9 +459,9 @@
       "version": "inconnue",
       "srp_score": 2.6,
       "decision": "PASSER",
-      "ai_explanation": "La vulnérabilité dans les fonctions de gestion de clés publiques pourrait permettre à un attaquant de contourner des vérifications cryptographiques. Le faible score SRP indique un risque limité en pratique.",
-      "ai_fix": "Mettre à jour le package cryptography vers la version 46.0.5 ou supérieure pour corriger les fonctions affectées.",
-      "timestamp": "2026-06-11T06:54:57.362396Z"
+      "ai_explanation": "Cette vulnérabilité dans le package cryptography permet à un attaquant de contourner les vérifications de clé publique, ce qui pourrait conduire à l'acceptation de clés malveillantes. Bien que le risque soit modéré (CVSS 6.5), l'absence d'exploits actifs connus réduit l'urgence.",
+      "ai_fix": "Mettre à jour le package cryptography vers la version 46.0.5 ou supérieure pour corriger les fonctions de validation des clés publiques.",
+      "timestamp": "2026-06-12T06:47:53.262831Z"
     },
     {
       "cve_id": "CVE-2023-23931",
@@ -439,9 +469,9 @@
       "version": "inconnue",
       "srp_score": 2.6,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet à des objets immuables comme `bytes` d'être modifiés via `Cipher.update_into`, ce qui pourrait corrompre des données sensibles en mémoire. Le risque est modéré car l'exploitation nécessite un contexte spécifique.",
+      "ai_explanation": "Cette vulnérabilité permet à des objets immuables comme 'bytes' d'être modifiés via Cipher.update_into, ce qui pourrait corrompre des données sensibles en mémoire. Le risque est modéré car l'exploitation nécessite un contexte spécifique.",
       "ai_fix": "Mettre à jour le package cryptography vers une version corrigée qui valide correctement les buffers modifiables avant traitement.",
-      "timestamp": "2026-06-11T06:55:02.187622Z"
+      "timestamp": "2026-06-12T06:47:58.216027Z"
     },
     {
       "cve_id": "CVE-2023-32681",
@@ -449,9 +479,19 @@
       "version": "inconnue",
       "srp_score": 2.6,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet la fuite des en-têtes Proxy-Authorization lors de redirections HTTPS, exposant potentiellement des identifiants sensibles. Bien que le risque soit modéré (SRP 2.6), cela pourrait faciliter des attaques MITM ou credential stuffing.",
-      "ai_fix": "Mettre à jour la bibliothèque Requests vers une version corrigée (>=2.31.0). Vérifier que les proxies ne transmettent pas d'en-têtes sensibles après redirection.",
-      "timestamp": "2026-06-11T06:58:48.187053Z"
+      "ai_explanation": "Cette vulnérabilité permet la fuite des en-têtes Proxy-Authorization lors de redirections HTTPS, exposant potentiellement des identifiants sensibles. Bien que le score SRP soit faible, cela pourrait faciliter des attaques MITM ou credential stuffing si combiné avec d'autres vulnérabilités.",
+      "ai_fix": "Mettre à jour la bibliothèque requests vers la version 2.31.0 ou supérieure qui corrige ce comportement. Vérifier également que les proxies configurés n'utilisent pas de credentials sensibles.",
+      "timestamp": "2026-06-12T06:51:17.505950Z"
+    },
+    {
+      "cve_id": "CVE-2021-32052",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 2.5,
+      "decision": "PASSER",
+      "ai_explanation": "Cette vulnérabilité dans Django permet l'injection d'en-têtes HTTP via des URLs contenant des caractères de contrôle (newlines/tabs). Bien que le risque soit modéré (SRP 2.5), elle pourrait être exploitée pour des attaques de type response splitting.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.22, 3.1.10 ou 3.2.2 qui corrigent cette faille en bloquant les caractères de contrôle dans URLValidator.",
+      "timestamp": "2026-06-12T06:50:18.296630Z"
     },
     {
       "cve_id": "CVE-2026-42308",
@@ -461,37 +501,7 @@
       "decision": "PASSER",
       "ai_explanation": "Cette vulnérabilité dans Pillow permet un dépassement d'entier lors du traitement de polices malveillantes, pouvant potentiellement causer un crash de l'application. Le faible score SRP et EPSS indique un risque limité en pratique.",
       "ai_fix": "Mettre à jour Pillow vers la version 12.2.0 ou supérieure pour corriger le dépassement d'entier.",
-      "timestamp": "2026-06-11T06:54:18.261573Z"
-    },
-    {
-      "cve_id": "CVE-2026-42310",
-      "package": "Pillow",
-      "version": "inconnue",
-      "srp_score": 2.2,
-      "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet un DoS via un PDF malveillant qui bloque indéfiniment le processus. Le risque opérationnel est modéré car nécessite une interaction utilisateur.",
-      "ai_fix": "Mettre à jour Pillow vers la version 12.2.0 ou ultérieure pour corriger ce problème de parsing PDF.",
-      "timestamp": "2026-06-11T06:54:22.423589Z"
-    },
-    {
-      "cve_id": "CVE-2024-0727",
-      "package": "cryptography",
-      "version": "inconnue",
-      "srp_score": 2.2,
-      "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet un DoS via un crash d'OpenSSL lors du traitement d'un fichier PKCS12 malveillant. Le risque est limité (SRP 2.2) car nécessite un fichier spécifique et ne permet pas d'exécution de code.",
-      "ai_fix": "Mettre à jour la bibliothèque OpenSSL vers une version corrigée. Valider l'origine des fichiers PKCS12 avant traitement.",
-      "timestamp": "2026-06-11T06:55:12.557540Z"
-    },
-    {
-      "cve_id": "CVE-2024-35195",
-      "package": "requests",
-      "version": "inconnue",
-      "srp_score": 2.2,
-      "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans la bibliothèque Requests permet une validation persistante des certificats SSL désactivée pour un hôte après une première requête non vérifiée, exposant potentiellement aux attaques MITM.",
-      "ai_fix": "Mettre à jour Requests vers la version 2.32.0 ou supérieure pour corriger le comportement de vérification des certificats.",
-      "timestamp": "2026-06-11T06:58:53.129300Z"
+      "timestamp": "2026-06-12T06:47:12.220949Z"
     },
     {
       "cve_id": "CVE-2026-25645",
@@ -499,9 +509,9 @@
       "version": "inconnue",
       "srp_score": 2.2,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet à un attaquant local de mener une attaque par symlink en exploitant le nom de fichier prédictible lors de l'extraction d'archives zip. Le risque est limité car nécessite un accès local et des conditions spécifiques.",
-      "ai_fix": "Mettre à jour la bibliothèque requests vers la version 2.33.0 ou supérieure pour corriger le comportement d'extraction des fichiers zip.",
-      "timestamp": "2026-06-11T06:59:04.735125Z"
+      "ai_explanation": "Cette vulnérabilité permet à un attaquant local de mener une attaque par symlink en exploitant le nom de fichier prévisible lors de l'extraction d'archives zip. Le risque est limité car il nécessite un accès local et une interaction préalable.",
+      "ai_fix": "Mettre à jour la bibliothèque requests vers la version 2.33.0 ou supérieure qui corrige ce comportement en générant des noms de fichiers temporaires aléatoires.",
+      "timestamp": "2026-06-12T06:51:33.834935Z"
     },
     {
       "cve_id": "CVE-2021-45452",
@@ -509,9 +519,9 @@
       "version": "inconnue",
       "srp_score": 2.1,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet un directory traversal via des noms de fichiers malveillants dans Django, pouvant mener à l'écriture de fichiers dans des répertoires non autorisés. Le faible score SRP et EPSS indique un risque limité en pratique.",
-      "ai_fix": "Mettre à jour Django vers les versions 2.2.26, 3.2.11 ou 4.0.1+. Valider systématiquement les noms de fichiers entrants.",
-      "timestamp": "2026-06-11T06:58:07.753729Z"
+      "ai_explanation": "Cette vulnérabilité de traversal de répertoire dans Django permet à un attaquant d'écrire des fichiers en dehors du répertoire prévu via des noms de fichiers malveillants. Bien que le risque soit modéré (CVSS 5.3), l'absence d'acteurs connus exploitant cette faille réduit son urgence.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.26, 3.2.11 ou 4.0.1 qui corrigent cette vulnérabilité.",
+      "timestamp": "2026-06-12T06:50:36.448972Z"
     },
     {
       "cve_id": "CVE-2024-45231",
@@ -519,9 +529,9 @@
       "version": "inconnue",
       "srp_score": 2.1,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet l'énumération d'emails via les requêtes de réinitialisation de mot de passe, révélant quels comptes existent dans le système. Bien que le risque soit modéré (SRP 2.1), cela facilite le phishing ou les attaques ciblées.",
-      "ai_fix": "Mettre à jour Django vers une version corrigée (5.1.2, 5.0.10 ou 4.2.17) qui masque la différence de réponse entre emails valides et invalides.",
-      "timestamp": "2026-06-11T06:58:31.002681Z"
+      "ai_explanation": "This vulnerability allows attackers to enumerate valid email addresses by observing the response differences in Django's password reset flow. While low-risk (SRP 2.1), it could aid phishing campaigns or targeted attacks. No active exploitation has been observed.",
+      "ai_fix": "Implement rate-limiting on password reset requests and use identical response messages for both success and failure cases to prevent enumeration.",
+      "timestamp": "2026-06-12T06:51:00.162644Z"
     },
     {
       "cve_id": "CVE-2025-48432",
@@ -529,19 +539,9 @@
       "version": "inconnue",
       "srp_score": 2.1,
       "decision": "PASSER",
-      "ai_explanation": "This Django vulnerability allows log injection via crafted URLs, potentially enabling attackers to manipulate or forge log entries. While the impact is limited to log integrity, it could facilitate obfuscation of malicious activities. The low SRP score indicates minimal real-world exploitation risk.",
-      "ai_fix": "Upgrade Django to version 5.2.3, 5.1.11, or 4.2.23 which properly escape request.path in HTTP response logging.",
-      "timestamp": "2026-06-11T06:58:36.037369Z"
-    },
-    {
-      "cve_id": "CVE-2024-47081",
-      "package": "requests",
-      "version": "inconnue",
-      "srp_score": 2.1,
-      "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité dans la bibliothèque Requests permet une fuite des identifiants .netrc via des URLs malveillantes spécialement conçues. Bien que le risque soit modéré (CVSS 5.3), l'exploitation nécessite des conditions spécifiques.",
-      "ai_fix": "Mettre à jour Requests vers la version 2.32.4 ou supérieure. En alternative, désactiver l'utilisation du fichier .netrc dans les anciennes versions.",
-      "timestamp": "2026-06-11T06:58:58.470433Z"
+      "ai_explanation": "Cette vulnérabilité permet une manipulation des logs Django via des URLs malveillantes, pouvant fausser l'audit ou masquer des activités. Le faible score SRP et EPSS indique un risque limité en pratique.",
+      "ai_fix": "Mettre à jour Django vers les versions 5.2.3, 5.1.11 ou 4.2.23 qui corrigent l'échappement de request.path dans les logs.",
+      "timestamp": "2026-06-12T06:51:05.404504Z"
     },
     {
       "cve_id": "CVE-2021-33203",
@@ -549,9 +549,9 @@
       "version": "inconnue",
       "srp_score": 2.0,
       "decision": "PASSER",
-      "ai_explanation": "Cette vulnérabilité permet un directory traversal limité via l'interface admindocs de Django, accessible uniquement aux utilisateurs avec le statut 'staff'. Le risque principal est la fuite d'information sur l'existence de fichiers sensibles.",
-      "ai_fix": "Mettre à jour Django vers les versions 2.2.24, 3.1.12 ou 3.2.4 qui corrigent cette vulnérabilité.",
-      "timestamp": "2026-06-11T06:57:57.202404Z"
+      "ai_explanation": "Cette vulnérabilité permet à des utilisateurs avec des droits staff dans Django d'effectuer du directory traversal via l'interface admindocs, révélant potentiellement l'existence de fichiers sensibles. Le risque est limité car il nécessite des privilèges élevés et ne permet pas la lecture directe des fichiers.",
+      "ai_fix": "Mettre à jour Django vers les versions 2.2.24, 3.1.12 ou 3.2.4 qui corrigent cette vulnérabilité. Restreindre l'accès à l'interface admindocs aux utilisateurs de confiance si nécessaire.",
+      "timestamp": "2026-06-12T06:50:24.992423Z"
     },
     {
       "cve_id": "GHSA-39hc-v87j-747x",
@@ -559,9 +559,9 @@
       "version": "inconnue",
       "srp_score": 0.0,
       "decision": "PASSER",
-      "ai_explanation": "This vulnerability involves outdated OpenSSL versions in cryptography wheels, exposing potential security flaws. No active exploitation has been observed (SRP 0.0). The linked OpenSSL advisory details specific risks.",
-      "ai_fix": "Upgrade cryptography package to version 38.0.4 or later to include patched OpenSSL dependencies.",
-      "timestamp": "2026-06-11T06:55:16.765714Z"
+      "ai_explanation": "This vulnerability involves outdated OpenSSL versions bundled with cryptography package, exposing potential cryptographic weaknesses. While no active exploitation is reported, the linked OpenSSL advisories indicate multiple security flaws.",
+      "ai_fix": "Upgrade cryptography package to version 38.0.4 or later which includes patched OpenSSL versions.",
+      "timestamp": "2026-06-12T06:48:14.749649Z"
     },
     {
       "cve_id": "GHSA-h4gh-qq45-vh27",
@@ -569,9 +569,9 @@
       "version": "inconnue",
       "srp_score": 0.0,
       "decision": "PASSER",
-      "ai_explanation": "This vulnerability involves statically linked OpenSSL versions in cryptography wheels, but has no known exploit path (SRP 0.0). No active threats have been observed targeting this specific issue.",
-      "ai_fix": "Update to cryptography 43.0.1+ which includes patched OpenSSL versions, though urgency is low given the negligible risk.",
-      "timestamp": "2026-06-11T06:55:20.977463Z"
+      "ai_explanation": "This vulnerability involves statically linked OpenSSL versions in cryptography wheels, but with a SRP score of 0.0 indicating negligible practical risk. No active exploitation has been observed.",
+      "ai_fix": "Update to cryptography 43.0.1 or later to ensure you're not using vulnerable OpenSSL versions, though the actual risk is minimal.",
+      "timestamp": "2026-06-12T06:48:19.187969Z"
     }
   ]
 }
