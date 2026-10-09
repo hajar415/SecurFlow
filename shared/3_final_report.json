@@ -1,14 +1,14 @@
 {
   "decision_metadata": {
-    "timestamp": "2026-10-08T08:32:16.968647Z",
+    "timestamp": "2026-10-09T08:35:09.853526Z",
     "engine_version": "1.0.0",
     "config_used": {
       "high_context_components": [
-        "typeorm",
-        "mongoose",
+        "sqlalchemy",
         "psycopg2",
         "sequelize",
-        "sqlalchemy"
+        "mongoose",
+        "typeorm"
       ],
       "block_threshold": 7.0,
       "alert_threshold": 4.0,
@@ -16,8 +16,8 @@
     },
     "total_processed": 72,
     "decisions": {
-      "BLOQUER": 8,
-      "ALERTER": 33,
+      "BLOQUER": 9,
+      "ALERTER": 32,
       "PASSER": 31
     },
     "average_srp": 4.6
@@ -31,7 +31,7 @@
       "decision": "BLOQUER",
       "ai_explanation": "Alerte CTI de niveau BLOQUER pour CVE-2023-4863. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:03.931907Z"
+      "timestamp": "2026-10-09T08:34:53.417715Z"
     },
     {
       "cve_id": "CVE-2022-34265",
@@ -41,7 +41,7 @@
       "decision": "BLOQUER",
       "ai_explanation": "Alerte CTI de niveau BLOQUER pour CVE-2022-34265. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:10.260672Z"
+      "timestamp": "2026-10-09T08:35:01.230458Z"
     },
     {
       "cve_id": "CVE-2021-35042",
@@ -51,7 +51,7 @@
       "decision": "BLOQUER",
       "ai_explanation": "Alerte CTI de niveau BLOQUER pour CVE-2021-35042. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:09.681667Z"
+      "timestamp": "2026-10-09T08:35:00.511323Z"
     },
     {
       "cve_id": "CVE-2023-24580",
@@ -61,7 +61,7 @@
       "decision": "BLOQUER",
       "ai_explanation": "Alerte CTI de niveau BLOQUER pour CVE-2023-24580. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:12.415978Z"
+      "timestamp": "2026-10-09T08:35:04.009076Z"
     },
     {
       "cve_id": "CVE-2023-0286",
@@ -71,7 +71,7 @@
       "decision": "BLOQUER",
       "ai_explanation": "Alerte CTI de niveau BLOQUER pour CVE-2023-0286. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
-      "timestamp": "2026-10-08T08:32:07.730981Z"
+      "timestamp": "2026-10-09T08:34:57.993875Z"
     },
     {
       "cve_id": "CVE-2022-28346",
@@ -81,7 +81,17 @@
       "decision": "BLOQUER",
       "ai_explanation": "Alerte CTI de niveau BLOQUER pour CVE-2022-28346. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:09.839864Z"
+      "timestamp": "2026-10-09T08:35:00.742741Z"
+    },
+    {
+      "cve_id": "CVE-2022-23833",
+      "package": "django",
+      "version": "inconnue",
+      "srp_score": 7.5,
+      "decision": "BLOQUER",
+      "ai_explanation": "Alerte CTI de niveau BLOQUER pour CVE-2022-23833. (Erreur API IA).",
+      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
+      "timestamp": "2026-10-09T08:35:02.897946Z"
     },
     {
       "cve_id": "CVE-2023-23969",
@@ -91,7 +101,7 @@
       "decision": "BLOQUER",
       "ai_explanation": "Alerte CTI de niveau BLOQUER pour CVE-2023-23969. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:12.199914Z"
+      "timestamp": "2026-10-09T08:35:03.798972Z"
     },
     {
       "cve_id": "CVE-2020-14343",
@@ -101,7 +111,7 @@
       "decision": "BLOQUER",
       "ai_explanation": "Alerte CTI de niveau BLOQUER pour CVE-2020-14343. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour PyYAML vinconnue.",
-      "timestamp": "2026-10-08T08:32:07.569450Z"
+      "timestamp": "2026-10-09T08:34:57.777891Z"
     },
     {
       "cve_id": "CVE-2022-22817",
@@ -111,7 +121,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2022-22817. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:03.009272Z"
+      "timestamp": "2026-10-09T08:34:52.118593Z"
     },
     {
       "cve_id": "CVE-2022-28347",
@@ -121,7 +131,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2022-28347. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:10.050638Z"
+      "timestamp": "2026-10-09T08:35:00.959231Z"
     },
     {
       "cve_id": "CVE-2025-64459",
@@ -131,7 +141,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2025-64459. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:10.632412Z"
+      "timestamp": "2026-10-09T08:35:01.708328Z"
     },
     {
       "cve_id": "CVE-2026-54058",
@@ -141,7 +151,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-54058. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:04.319538Z"
+      "timestamp": "2026-10-09T08:34:53.961261Z"
     },
     {
       "cve_id": "CVE-2025-57833",
@@ -151,7 +161,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2025-57833. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:13.355084Z"
+      "timestamp": "2026-10-09T08:35:05.237302Z"
     },
     {
       "cve_id": "CVE-2026-15307",
@@ -161,7 +171,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-15307. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:13.728404Z"
+      "timestamp": "2026-10-09T08:35:05.731207Z"
     },
     {
       "cve_id": "CVE-2023-50447",
@@ -171,7 +181,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2023-50447. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:03.219027Z"
+      "timestamp": "2026-10-09T08:34:52.334733Z"
     },
     {
       "cve_id": "CVE-2026-59197",
@@ -181,7 +191,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-59197. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:05.223966Z"
+      "timestamp": "2026-10-09T08:34:55.167056Z"
     },
     {
       "cve_id": "CVE-2025-64458",
@@ -191,7 +201,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2025-64458. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:13.555160Z"
+      "timestamp": "2026-10-09T08:35:05.496912Z"
     },
     {
       "cve_id": "CVE-2026-59199",
@@ -201,7 +211,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-59199. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:05.392394Z"
+      "timestamp": "2026-10-09T08:34:55.408439Z"
     },
     {
       "cve_id": "CVE-2026-59200",
@@ -211,7 +221,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-59200. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:05.607936Z"
+      "timestamp": "2026-10-09T08:34:55.627691Z"
     },
     {
       "cve_id": "CVE-2026-59204",
@@ -221,7 +231,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-59204. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:05.775438Z"
+      "timestamp": "2026-10-09T08:34:55.839863Z"
     },
     {
       "cve_id": "CVE-2026-59205",
@@ -231,7 +241,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-59205. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:05.980345Z"
+      "timestamp": "2026-10-09T08:34:56.055321Z"
     },
     {
       "cve_id": "CVE-2026-59198",
@@ -241,7 +251,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-59198. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:07.239668Z"
+      "timestamp": "2026-10-09T08:34:57.254644Z"
     },
     {
       "cve_id": "CVE-2023-50782",
@@ -251,7 +261,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2023-50782. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
-      "timestamp": "2026-10-08T08:32:07.944837Z"
+      "timestamp": "2026-10-09T08:34:58.256579Z"
     },
     {
       "cve_id": "CVE-2024-26130",
@@ -261,7 +271,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2024-26130. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
-      "timestamp": "2026-10-08T08:32:08.159907Z"
+      "timestamp": "2026-10-09T08:34:58.476296Z"
     },
     {
       "cve_id": "CVE-2023-49083",
@@ -271,7 +281,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2023-49083. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
-      "timestamp": "2026-10-08T08:32:08.963402Z"
+      "timestamp": "2026-10-09T08:34:59.453328Z"
     },
     {
       "cve_id": "CVE-2023-30861",
@@ -281,7 +291,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2023-30861. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour flask vinconnue.",
-      "timestamp": "2026-10-08T08:32:16.210801Z"
+      "timestamp": "2026-10-09T08:35:08.813994Z"
     },
     {
       "cve_id": "CVE-2026-26007",
@@ -291,7 +301,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-26007. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
-      "timestamp": "2026-10-08T08:32:08.323662Z"
+      "timestamp": "2026-10-09T08:34:58.726622Z"
     },
     {
       "cve_id": "CVE-2023-23931",
@@ -301,7 +311,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2023-23931. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
-      "timestamp": "2026-10-08T08:32:08.748968Z"
+      "timestamp": "2026-10-09T08:34:59.207097Z"
     },
     {
       "cve_id": "CVE-2021-32052",
@@ -311,7 +321,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2021-32052. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:13.936428Z"
+      "timestamp": "2026-10-09T08:35:05.943844Z"
     },
     {
       "cve_id": "CVE-2022-22818",
@@ -321,7 +331,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2022-22818. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:14.624965Z"
+      "timestamp": "2026-10-09T08:35:06.915474Z"
     },
     {
       "cve_id": "CVE-2024-28219",
@@ -331,7 +341,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2024-28219. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:04.147757Z"
+      "timestamp": "2026-10-09T08:34:53.639488Z"
     },
     {
       "cve_id": "CVE-2024-0727",
@@ -341,7 +351,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2024-0727. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
-      "timestamp": "2026-10-08T08:32:09.135993Z"
+      "timestamp": "2026-10-09T08:34:59.671355Z"
     },
     {
       "cve_id": "CVE-2024-35195",
@@ -351,7 +361,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2024-35195. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour requests vinconnue.",
-      "timestamp": "2026-10-08T08:32:16.589237Z"
+      "timestamp": "2026-10-09T08:35:09.328295Z"
     },
     {
       "cve_id": "CVE-2026-42308",
@@ -361,7 +371,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-42308. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:06.176505Z"
+      "timestamp": "2026-10-09T08:34:56.322492Z"
     },
     {
       "cve_id": "CVE-2026-42310",
@@ -371,7 +381,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-42310. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:06.387030Z"
+      "timestamp": "2026-10-09T08:34:56.542612Z"
     },
     {
       "cve_id": "CVE-2026-25645",
@@ -381,7 +391,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2026-25645. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour requests vinconnue.",
-      "timestamp": "2026-10-08T08:32:16.968386Z"
+      "timestamp": "2026-10-09T08:35:09.853214Z"
     },
     {
       "cve_id": "CVE-2024-47081",
@@ -391,17 +401,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2024-47081. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour requests vinconnue.",
-      "timestamp": "2026-10-08T08:32:16.798233Z"
-    },
-    {
-      "cve_id": "CVE-2022-23833",
-      "package": "django",
-      "version": "inconnue",
-      "srp_score": 4.5,
-      "decision": "ALERTER",
-      "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2022-23833. (Erreur API IA).",
-      "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:11.713545Z"
+      "timestamp": "2026-10-09T08:35:09.582359Z"
     },
     {
       "cve_id": "CVE-2023-46695",
@@ -411,7 +411,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2023-46695. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:12.991761Z"
+      "timestamp": "2026-10-09T08:35:04.762122Z"
     },
     {
       "cve_id": "CVE-2017-18342",
@@ -421,7 +421,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2017-18342. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour PyYAML vinconnue.",
-      "timestamp": "2026-10-08T08:32:07.397902Z"
+      "timestamp": "2026-10-09T08:34:57.510436Z"
     },
     {
       "cve_id": "CVE-2023-31047",
@@ -431,7 +431,7 @@
       "decision": "ALERTER",
       "ai_explanation": "Alerte CTI de niveau ALERTER pour CVE-2023-31047. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:10.426661Z"
+      "timestamp": "2026-10-09T08:35:01.446702Z"
     },
     {
       "cve_id": "CVE-2022-24303",
@@ -441,7 +441,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2022-24303. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:03.378164Z"
+      "timestamp": "2026-10-09T08:34:52.690646Z"
     },
     {
       "cve_id": "CVE-2022-36359",
@@ -451,7 +451,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2022-36359. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:11.870324Z"
+      "timestamp": "2026-10-09T08:35:03.304575Z"
     },
     {
       "cve_id": "CVE-2021-31542",
@@ -461,7 +461,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-31542. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:10.794505Z"
+      "timestamp": "2026-10-09T08:35:01.983226Z"
     },
     {
       "cve_id": "CVE-2021-33571",
@@ -471,7 +471,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-33571. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:11.001520Z"
+      "timestamp": "2026-10-09T08:35:02.208907Z"
     },
     {
       "cve_id": "CVE-2021-45115",
@@ -481,7 +481,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-45115. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:11.224680Z"
+      "timestamp": "2026-10-09T08:35:02.464185Z"
     },
     {
       "cve_id": "CVE-2021-45116",
@@ -491,7 +491,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-45116. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:11.496994Z"
+      "timestamp": "2026-10-09T08:35:02.685808Z"
     },
     {
       "cve_id": "CVE-2022-41323",
@@ -501,7 +501,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2022-41323. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:12.037056Z"
+      "timestamp": "2026-10-09T08:35:03.571485Z"
     },
     {
       "cve_id": "CVE-2023-36053",
@@ -511,7 +511,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-36053. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:12.625584Z"
+      "timestamp": "2026-10-09T08:35:04.276600Z"
     },
     {
       "cve_id": "CVE-2024-27351",
@@ -521,7 +521,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2024-27351. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:15.006033Z"
+      "timestamp": "2026-10-09T08:35:07.435017Z"
     },
     {
       "cve_id": "CVE-2022-45198",
@@ -531,7 +531,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2022-45198. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:03.551574Z"
+      "timestamp": "2026-10-09T08:34:52.906284Z"
     },
     {
       "cve_id": "CVE-2023-44271",
@@ -541,7 +541,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-44271. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:03.712654Z"
+      "timestamp": "2026-10-09T08:34:53.161053Z"
     },
     {
       "cve_id": "CVE-2026-54059",
@@ -551,7 +551,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-54059. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:04.491691Z"
+      "timestamp": "2026-10-09T08:34:54.179560Z"
     },
     {
       "cve_id": "CVE-2026-54060",
@@ -561,7 +561,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-54060. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:04.688626Z"
+      "timestamp": "2026-10-09T08:34:54.392245Z"
     },
     {
       "cve_id": "CVE-2026-55379",
@@ -571,7 +571,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-55379. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:04.860601Z"
+      "timestamp": "2026-10-09T08:34:54.665288Z"
     },
     {
       "cve_id": "CVE-2026-55380",
@@ -581,7 +581,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-55380. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:05.067446Z"
+      "timestamp": "2026-10-09T08:34:54.896985Z"
     },
     {
       "cve_id": "CVE-2023-43665",
@@ -591,7 +591,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-43665. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:12.793948Z"
+      "timestamp": "2026-10-09T08:35:04.494114Z"
     },
     {
       "cve_id": "CVE-2024-24680",
@@ -601,7 +601,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2024-24680. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:13.159358Z"
+      "timestamp": "2026-10-09T08:35:05.014813Z"
     },
     {
       "cve_id": "CVE-2021-44420",
@@ -611,7 +611,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-44420. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:14.257422Z"
+      "timestamp": "2026-10-09T08:35:06.446017Z"
     },
     {
       "cve_id": "CVE-2023-41164",
@@ -621,7 +621,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-41164. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:14.844905Z"
+      "timestamp": "2026-10-09T08:35:07.133937Z"
     },
     {
       "cve_id": "CVE-2023-32681",
@@ -631,7 +631,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2023-32681. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour requests vinconnue.",
-      "timestamp": "2026-10-08T08:32:16.374029Z"
+      "timestamp": "2026-10-09T08:35:09.074371Z"
     },
     {
       "cve_id": "CVE-2021-45452",
@@ -641,7 +641,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-45452. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:14.416261Z"
+      "timestamp": "2026-10-09T08:35:06.654008Z"
     },
     {
       "cve_id": "CVE-2024-45231",
@@ -651,7 +651,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2024-45231. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:15.294870Z"
+      "timestamp": "2026-10-09T08:35:07.697841Z"
     },
     {
       "cve_id": "CVE-2025-48432",
@@ -661,7 +661,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2025-48432. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:15.505416Z"
+      "timestamp": "2026-10-09T08:35:07.910787Z"
     },
     {
       "cve_id": "CVE-2026-15830",
@@ -671,7 +671,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-15830. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:15.682447Z"
+      "timestamp": "2026-10-09T08:35:08.125358Z"
     },
     {
       "cve_id": "CVE-2021-33203",
@@ -681,7 +681,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2021-33203. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:14.092143Z"
+      "timestamp": "2026-10-09T08:35:06.219855Z"
     },
     {
       "cve_id": "CVE-2026-53877",
@@ -691,7 +691,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-53877. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:15.887409Z"
+      "timestamp": "2026-10-09T08:35:08.337054Z"
     },
     {
       "cve_id": "CVE-2026-55798",
@@ -701,7 +701,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-55798. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour Pillow vinconnue.",
-      "timestamp": "2026-10-08T08:32:06.562673Z"
+      "timestamp": "2026-10-09T08:34:56.803288Z"
     },
     {
       "cve_id": "CVE-2026-53878",
@@ -711,7 +711,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour CVE-2026-53878. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour django vinconnue.",
-      "timestamp": "2026-10-08T08:32:16.047940Z"
+      "timestamp": "2026-10-09T08:35:08.597964Z"
     },
     {
       "cve_id": "GHSA-537c-gmf6-5ccf",
@@ -721,7 +721,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour GHSA-537c-gmf6-5ccf. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
-      "timestamp": "2026-10-08T08:32:08.527621Z"
+      "timestamp": "2026-10-09T08:34:58.989982Z"
     },
     {
       "cve_id": "GHSA-39hc-v87j-747x",
@@ -731,7 +731,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour GHSA-39hc-v87j-747x. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
-      "timestamp": "2026-10-08T08:32:09.350384Z"
+      "timestamp": "2026-10-09T08:34:59.882144Z"
     },
     {
       "cve_id": "GHSA-h4gh-qq45-vh27",
@@ -741,7 +741,7 @@
       "decision": "PASSER",
       "ai_explanation": "Alerte CTI de niveau PASSER pour GHSA-h4gh-qq45-vh27. (Erreur API IA).",
       "ai_fix": "Vérifiez les correctifs de sécurité pour cryptography vinconnue.",
-      "timestamp": "2026-10-08T08:32:09.509400Z"
+      "timestamp": "2026-10-09T08:35:00.248373Z"
     }
   ]
 }
